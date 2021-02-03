@@ -78,10 +78,11 @@ var App = function() {
 					component: Network_1.Network,
 				}),
 			),
+			React.createElement(react_router_dom_1.Route, { path: '/login' }),
 			React.createElement(react_router_dom_1.Route, {
-				path: '*',
+				path: '/',
 				render: function() {
-					return React.createElement('div', null, '404');
+					return React.createElement('div', null, '404 Not Found');
 				},
 			}),
 		),

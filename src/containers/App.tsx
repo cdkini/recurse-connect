@@ -51,7 +51,8 @@ const App: React.FC = () => {
 					exact
 					component={Network}
 				/>
-				<Route path="*" render={() => <div>404</div>} />
+				<Route path="/login" />
+				<Route path="/" render={() => <div>404 Not Found</div>} />
 			</Switch>
 		</div>
 	);
