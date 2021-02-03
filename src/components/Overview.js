@@ -2,8 +2,13 @@
 exports.__esModule = true;
 exports.Overview = void 0;
 var React = require('react');
+var NavigationBar_1 = require('./NavigationBar');
 var Overview = function() {
-	return React.createElement('div', null, 'Overview');
+	return React.createElement(
+		'div',
+		null,
+		React.createElement(NavigationBar_1.NavigationBar, null),
+		React.createElement('div', null, 'Overview'),
+	);
 };
 exports.Overview = Overview;
-exports['default'] = exports.Overview;

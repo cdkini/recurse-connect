@@ -2,8 +2,13 @@
 exports.__esModule = true;
 exports.Home = void 0;
 var React = require('react');
+var NavigationBar_1 = require('./NavigationBar');
 var Home = function() {
-	return React.createElement('div', null, 'Home');
+	return React.createElement(
+		'div',
+		null,
+		React.createElement(NavigationBar_1.NavigationBar, null),
+		React.createElement('div', null, 'Home'),
+	);
 };
 exports.Home = Home;
-exports['default'] = exports.Home;

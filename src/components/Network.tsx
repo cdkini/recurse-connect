@@ -1,8 +1,13 @@
 import * as React from 'react';
+import { NavigationBar } from './NavigationBar';
 
 interface Props {}
 
 export const Network: React.FC<Props> = () => {
-	return <div>Network</div>;
+	return (
+		<div>
+			<NavigationBar />
+			<div>Networ</div>
+		</div>
+	);
 };
-export default Network;

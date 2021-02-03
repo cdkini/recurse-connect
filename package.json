@@ -10,7 +10,7 @@
     "lint": "pretty-quick --staged && lint-staged",
     "start": "react-scripts start",
     "test": "react-scripts test",
-    "ts-build": "rm -rf build && tsc"
+    "ts-build": "rm -rf build && tsc --jsx react src/*.tsx"
   },
   "keywords": [],
   "license": "ISC",
@@ -48,7 +48,9 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-router": "^5.1.11",
     "@types/react-router-dom": "^5.1.7",
+    "bootstrap": "^4.6.0",
     "pretty-quick": "^3.1.0",
+    "react-bootstrap": "^1.4.3",
     "react-router-dom": "^5.2.0"
   },
   "proxy": "http://localhost:5000",
