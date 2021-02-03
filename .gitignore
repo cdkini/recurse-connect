@@ -1,4 +1,5 @@
 .eslintcache
+__pycache__
 api/__pycache__
 api/venv
 build/
