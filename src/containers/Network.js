@@ -2,7 +2,7 @@
 exports.__esModule = true;
 exports.Network = void 0;
 var React = require('react');
-var NavigationBar_1 = require('./NavigationBar');
+var NavigationBar_1 = require('../components/NavigationBar');
 var react_force_graph_2d_1 = require('react-force-graph-2d');
 var Network = function() {
 	var fgRef = React.useRef();

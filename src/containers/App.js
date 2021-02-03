@@ -19,10 +19,10 @@ require('../../node_modules/bootstrap/dist/css/bootstrap.min.css');
 var React = require('react');
 var ProtectedRoute_1 = require('../components/ProtectedRoute');
 var react_router_dom_1 = require('react-router-dom');
-var Discover_1 = require('../components/Discover');
-var Home_1 = require('../components/Home');
-var Network_1 = require('../components/Network');
-var Overview_1 = require('../components/Overview');
+var Discover_1 = require('./Discover');
+var Home_1 = require('./Home');
+var Network_1 = require('./Network');
+var Overview_1 = require('./Overview');
 var SessionContext_1 = require('../contexts/SessionContext');
 // https://stackoverflow.com/questions/59422159/redirecting-a-user-to-the-page-they-requested-after-successful-authentication-wi/59423442#59423442
 var App = function() {

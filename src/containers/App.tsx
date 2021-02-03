@@ -4,10 +4,10 @@ import ProtectedRoute, {
 	ProtectedRouteProps,
 } from '../components/ProtectedRoute';
 import { Route, Switch } from 'react-router-dom';
-import { Discover } from '../components/Discover';
-import { Home } from '../components/Home';
-import { Network } from '../components/Network';
-import { Overview } from '../components/Overview';
+import { Discover } from './Discover';
+import { Home } from './Home';
+import { Network } from './Network';
+import { Overview } from './Overview';
 import { useSessionContext } from '../contexts/SessionContext';
 
 // https://stackoverflow.com/questions/59422159/redirecting-a-user-to-the-page-they-requested-after-successful-authentication-wi/59423442#59423442
