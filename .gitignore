@@ -1,4 +1,6 @@
 .eslintcache
+api/__pycache__
 api/venv
 build/
 node_modules/
+src/react-app-env.d.ts

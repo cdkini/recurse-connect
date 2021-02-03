@@ -1,30 +1,39 @@
 {
-  "name": "ts-template",
+  "name": "RecurseConnect",
   "version": "1.0.0",
   "description": "",
-  "author": "Ochuko Ekrresa <kelvinekrresa@gmail.com>",
+  "author": "Chetan Kini",
   "main": "index.js",
   "scripts": {
+    "build": "react-scripts build",
+    "eject": "react-scripts eject",
     "lint": "pretty-quick --staged && lint-staged",
-    "build": "rm -rf build && tsc",
-    "dev": "ts-node-dev --transpileOnly --no-notify --clear src"
+    "start": "react-scripts start",
+    "test": "react-scripts test",
+    "ts-build": "rm -rf build && tsc"
   },
   "keywords": [],
   "license": "ISC",
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.5",
+    "@testing-library/user-event": "^12.6.3",
     "@types/node": "^13.7.1",
     "@typescript-eslint/eslint-plugin": "^2.19.0",
     "@typescript-eslint/parser": "^2.19.0",
-    "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-prettier": "^3.1.2",
-    "husky": ">=4",
+    "husky": "4",
     "lint-staged": ">=10",
     "prettier": "^1.19.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.1",
     "ts-node-dev": "^1.0.0-pre.44",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "web-vitals": "^0.2.4"
   },
   "husky": {
     "hooks": {
@@ -35,6 +44,24 @@
     "*.{ts,js}": "eslint --cache --fix"
   },
   "dependencies": {
-    "pretty-quick": "^3.1.0"
+    "@types/react": "^17.0.1",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-router": "^5.1.11",
+    "@types/react-router-dom": "^5.1.7",
+    "pretty-quick": "^3.1.0",
+    "react-router-dom": "^5.2.0"
+  },
+  "proxy": "http://localhost:5000",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
