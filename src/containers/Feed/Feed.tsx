@@ -3,11 +3,11 @@ import { NavigationBar } from '../../components/NavigationBar/NavigationBar';
 
 interface Props {}
 
-export const Overview: React.FC<Props> = () => {
+export const Feed: React.FC<Props> = () => {
 	return (
 		<div>
 			<NavigationBar />
-			<div>Overview</div>
+			<div>Feed</div>
 		</div>
 	);
 };

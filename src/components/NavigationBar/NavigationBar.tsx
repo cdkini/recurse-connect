@@ -115,7 +115,7 @@ export const NavigationBar: React.FC<Props> = () => {
 						<MenuIcon />
 					</IconButton>
 					<Typography variant="h6" noWrap>
-						Persistent drawer
+						RC Connect
 					</Typography>
 				</Toolbar>
 			</AppBar>
@@ -155,15 +155,6 @@ export const NavigationBar: React.FC<Props> = () => {
 				</List>
 				<Divider />
 			</Drawer>
-			<main
-				className={clsx(classes.content, {
-					[classes.contentShift]: open,
-				})}
-			>
-				<div className={classes.drawerHeader} />
-				<Typography paragraph>Paragraph 1</Typography>
-				<Typography paragraph>Paragraph 2</Typography>
-			</main>
 		</div>
 	);
 };

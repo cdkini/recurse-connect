@@ -3,7 +3,8 @@ import * as React from 'react';
 import { Discover } from '../Discover/Discover';
 import { Home } from '../Home/Home';
 import { Network } from '../Network/Network';
-import { Overview } from '../Overview/Overview';
+import { Feed } from '../Feed/Feed';
+import { Login } from '../Login/Login';
 import {
 	ProtectedRoute,
 	ProtectedRouteProps,
@@ -33,18 +34,17 @@ const App: React.FC = () => {
 	return (
 		<div>
 			<Switch>
-				<Route path="/" exact component={Home} />
+				<Route path={['/', '/home']} exact component={Home} />
 				<ProtectedRoute
 					{...defaultProtectedRouteProps}
-					path="/overview"
+					path="/feed"
 					exact
-					component={Overview}
+					component={Feed}
 				/>
-				<ProtectedRoute
-					{...defaultProtectedRouteProps}
-					path="/discover"
+				<Route
+					path="/network"
 					exact
-					component={Discover}
+					render={props => <Network {...props} profileID={3721} />}
 				/>
 				<ProtectedRoute
 					{...defaultProtectedRouteProps}
@@ -52,7 +52,13 @@ const App: React.FC = () => {
 					exact
 					component={Network}
 				/>
-				<Route path="/login" />
+				<ProtectedRoute
+					{...defaultProtectedRouteProps}
+					path="/discover"
+					exact
+					component={Discover}
+				/>
+				<Route path="/login" exact component={Login} />
 				<Route path="/" render={() => <div>404 Not Found</div>} />
 			</Switch>
 		</div>
