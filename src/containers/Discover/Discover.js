@@ -2,8 +2,8 @@
 exports.__esModule = true;
 exports.Discover = void 0;
 var React = require('react');
-var NavigationBar_1 = require('../components/NavigationBar');
-var Discover = function() {
+var NavigationBar_1 = require('../../components/NavigationBar/NavigationBar');
+exports.Discover = function() {
 	return React.createElement(
 		'div',
 		null,
@@ -11,4 +11,3 @@ var Discover = function() {
 		React.createElement('div', null, 'Discover'),
 	);
 };
-exports.Discover = Discover;

@@ -10,7 +10,8 @@
     "lint": "pretty-quick --staged && lint-staged",
     "start": "react-scripts start",
     "test": "react-scripts test",
-    "ts-build": "rm -rf build && tsc --jsx react src/*.tsx"
+    "ts-build": "rm -rf build && (find . -name '*.tsx' | xargs tsc -w --jsx react)",
+    "ts-watch": "find . -name '*.tsx' | xargs tsc -w --jsx react"
   },
   "keywords": [],
   "license": "ISC",

@@ -2,9 +2,9 @@
 exports.__esModule = true;
 var React = require('react');
 var ReactDOM = require('react-dom');
-var App_1 = require('./containers/App');
-var SessionContext_1 = require('./contexts/SessionContext');
 var react_router_dom_1 = require('react-router-dom');
+var SessionContext_1 = require('./contexts/SessionContext/SessionContext');
+var App_1 = require('./containers/App/App');
 var createApp = function() {
 	return React.createElement(
 		react_router_dom_1.BrowserRouter,

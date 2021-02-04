@@ -2,9 +2,9 @@
 exports.__esModule = true;
 exports.Network = void 0;
 var React = require('react');
-var NavigationBar_1 = require('../components/NavigationBar');
 var react_force_graph_2d_1 = require('react-force-graph-2d');
-var Network = function() {
+var NavigationBar_1 = require('../../components/NavigationBar/NavigationBar');
+exports.Network = function() {
 	var fgRef = React.useRef();
 	var _a = React.useState({ nodes: [], links: [] }),
 		graphData = _a[0],
@@ -31,4 +31,3 @@ var Network = function() {
 		';',
 	);
 };
-exports.Network = Network;

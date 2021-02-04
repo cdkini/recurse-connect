@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from 'react';
-import { initialSession, Session } from '../models/session';
 import * as React from 'react';
+import { Session, initialSession } from '../../models/session/session';
+import { createContext, useContext, useState } from 'react';
 
 export const SessionContext = createContext<
 	[Session, (session: Session) => void]

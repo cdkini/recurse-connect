@@ -15,15 +15,15 @@ var __assign =
 		return __assign.apply(this, arguments);
 	};
 exports.__esModule = true;
-require('../../node_modules/bootstrap/dist/css/bootstrap.min.css');
+require('../../../node_modules/bootstrap/dist/css/bootstrap.min.css');
 var React = require('react');
-var ProtectedRoute_1 = require('../components/ProtectedRoute');
+var Discover_1 = require('../Discover/Discover');
+var Home_1 = require('../Home/Home');
+var Network_1 = require('../Network/Network');
+var Overview_1 = require('../Overview/Overview');
+var ProtectedRoute_1 = require('../../components/ProtectedRoute/ProtectedRoute');
 var react_router_dom_1 = require('react-router-dom');
-var Discover_1 = require('./Discover');
-var Home_1 = require('./Home');
-var Network_1 = require('./Network');
-var Overview_1 = require('./Overview');
-var SessionContext_1 = require('../contexts/SessionContext');
+var SessionContext_1 = require('../../contexts/SessionContext/SessionContext');
 // https://stackoverflow.com/questions/59422159/redirecting-a-user-to-the-page-they-requested-after-successful-authentication-wi/59423442#59423442
 var App = function() {
 	var _a = SessionContext_1.useSessionContext(),
@@ -55,7 +55,7 @@ var App = function() {
 				component: Home_1.Home,
 			}),
 			React.createElement(
-				ProtectedRoute_1['default'],
+				ProtectedRoute_1.ProtectedRoute,
 				__assign({}, defaultProtectedRouteProps, {
 					path: '/overview',
 					exact: true,
@@ -63,7 +63,7 @@ var App = function() {
 				}),
 			),
 			React.createElement(
-				ProtectedRoute_1['default'],
+				ProtectedRoute_1.ProtectedRoute,
 				__assign({}, defaultProtectedRouteProps, {
 					path: '/discover',
 					exact: true,
@@ -71,7 +71,7 @@ var App = function() {
 				}),
 			),
 			React.createElement(
-				ProtectedRoute_1['default'],
+				ProtectedRoute_1.ProtectedRoute,
 				__assign({}, defaultProtectedRouteProps, {
 					path: '/network',
 					exact: true,

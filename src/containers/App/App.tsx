@@ -1,14 +1,15 @@
-import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import * as React from 'react';
-import ProtectedRoute, {
+import { Discover } from '../Discover/Discover';
+import { Home } from '../Home/Home';
+import { Network } from '../Network/Network';
+import { Overview } from '../Overview/Overview';
+import {
+	ProtectedRoute,
 	ProtectedRouteProps,
-} from '../components/ProtectedRoute';
+} from '../../components/ProtectedRoute/ProtectedRoute';
 import { Route, Switch } from 'react-router-dom';
-import { Discover } from './Discover';
-import { Home } from './Home';
-import { Network } from './Network';
-import { Overview } from './Overview';
-import { useSessionContext } from '../contexts/SessionContext';
+import { useSessionContext } from '../../contexts/SessionContext/SessionContext';
 
 // https://stackoverflow.com/questions/59422159/redirecting-a-user-to-the-page-they-requested-after-successful-authentication-wi/59423442#59423442
 const App: React.FC = () => {

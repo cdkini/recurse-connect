@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { NavigationBar } from '../components/NavigationBar';
 import ForceGraph2D from 'react-force-graph-2d';
+import { NavigationBar } from '../../components/NavigationBar/NavigationBar';
 
 interface Props {}
 

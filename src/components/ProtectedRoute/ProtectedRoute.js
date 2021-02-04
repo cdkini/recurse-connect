@@ -18,7 +18,7 @@ exports.__esModule = true;
 exports.ProtectedRoute = void 0;
 var React = require('react');
 var react_router_1 = require('react-router');
-var ProtectedRoute = function(props) {
+exports.ProtectedRoute = function(props) {
 	var currentLocation = react_router_1.useLocation();
 	var redirectPath = props.redirectPathOnAuthentication;
 	if (!props.isAuthenticated) {
@@ -39,5 +39,4 @@ var ProtectedRoute = function(props) {
 		return React.createElement(react_router_1.Route, __assign({}, props));
 	}
 };
-exports.ProtectedRoute = ProtectedRoute;
 exports['default'] = exports.ProtectedRoute;

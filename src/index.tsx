@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import App from './containers/App';
-import { SessionContextProvider } from './contexts/SessionContext';
 import { BrowserRouter } from 'react-router-dom';
+import { SessionContextProvider } from './contexts/SessionContext/SessionContext';
+import App from './containers/App/App';
 
 const createApp = () => {
 	return (
