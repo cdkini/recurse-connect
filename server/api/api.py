@@ -1,40 +1,37 @@
-from . import app, oauth, graph
+from . import app, oauth, utils
 from flask import redirect, url_for, session
 import requests
 
 
 recurse = oauth.register(
     name="recurse",
-    client_id="ee04d128f4f36993d81b37feb6fd5a0a21fa5a8e0fdfa940f50b1aa9a109f778",
-    client_secret="28a08d792884534822f311ae332806b09dfb610c9536d0c72b46692e4fc9dd12",
+    client_id="79966bc856ad6026fda3d298d612afb217618f40546df6e54f5dce3e274d480f",
+    client_secret="56bf38a0c4fd2e267abc7ae143f9b40f8b06d4174830421328eef3cc47924b18",
     access_token_url="https://www.recurse.com/oauth/token",
     access_token_params=None,
     authorize_url="https://www.recurse.com/oauth/authorize",
-    authorize_params={"redirect_uri": "http://127.0.0.1:3000/auth"},
+    authorize_params={"redirect_uri": "http://127.0.0.1:5000/api/v1/auth"},
     api_base_url="https://www.recurse.com/api/v1/",
     client_kwargs=None,
 )
 
 
-@app.route("/test")
-def test():
-    return {"test": "this is a test!"}
-
-
-@app.route("/login")
+@app.route("/api/v1/login")
 def login():
     recurse = oauth.create_client("recurse")
-    redirect_url = url_for("auth", _external=True)
-    return recurse.authorize_redirect(redirect_url)
+    redirect_url = url_for("auth")
+    a = str(recurse.authorize_redirect(redirect_url).__dict__["response"][0])
+    return {"a": a}
+    # return recurse.authorize_redirect(redirect_url)
 
 
-@app.route("/logout")
+@app.route("/api/v1/logout")
 def logout():
     session.pop("access_token", None)
     return redirect("/")
 
 
-@app.route("/auth")
+@app.route("/api/v1/auth")
 def auth():
     recurse = oauth.create_client("recurse")
     token = recurse.authorize_access_token()
@@ -49,7 +46,7 @@ def auth():
     return redirect("/")
 
 
-@app.route("/api/graph/<profile_id>", methods=["GET"])
+@app.route("/api/v1/graph/<profile_id>", methods=["GET"])
 def api_graph(profile_id):
-    data = graph.get_graph_data(profile_id)
+    data = utils.get_graph_data(profile_id)
     return data

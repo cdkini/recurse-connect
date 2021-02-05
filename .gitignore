@@ -5,3 +5,4 @@ api/venv
 build/
 node_modules/
 src/react-app-env.d.ts
+server/venv/

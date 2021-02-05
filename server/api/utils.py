@@ -15,8 +15,10 @@ def get_graph_data(profile_id):
         overlapping_stints = models.Stint.query.filter(
             models.Stint.batch_id.in_(overlapping_batches)).all()
         for stint in overlapping_stints:
-            node = models.Profile.query.filter(models.Profile.id == stint.profile_id).first()
-            node_list.append(node.serialize())
+            profile = models.Profile.query.filter(models.Profile.id == stint.profile_id).first()
+            node = profile.serialize()
+            node["batch_id"] = stint.batch_id
+            node_list.append(node)
             edge_list.append({
                 "source": stint.profile_id,
                 "target": stint.batch_id,
