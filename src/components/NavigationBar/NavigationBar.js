@@ -18,7 +18,6 @@ var Chat_1 = require("@material-ui/icons/Chat");
 var ChevronLeft_1 = require("@material-ui/icons/ChevronLeft");
 var ChevronRight_1 = require("@material-ui/icons/ChevronRight");
 var CssBaseline_1 = require("@material-ui/core/CssBaseline");
-var Divider_1 = require("@material-ui/core/Divider");
 var Drawer_1 = require("@material-ui/core/Drawer");
 var Explore_1 = require("@material-ui/icons/Explore");
 var Home_1 = require("@material-ui/icons/Home");
@@ -29,6 +28,8 @@ var ListItemIcon_1 = require("@material-ui/core/ListItemIcon");
 var ListItemText_1 = require("@material-ui/core/ListItemText");
 var Menu_1 = require("@material-ui/icons/Menu");
 var People_1 = require("@material-ui/icons/People");
+var Person_1 = require("@material-ui/icons/Person");
+var Settings_1 = require("@material-ui/icons/Settings");
 var Toolbar_1 = require("@material-ui/core/Toolbar");
 var Typography_1 = require("@material-ui/core/Typography");
 var clsx_1 = require("clsx");
@@ -82,6 +83,12 @@ var useStyles = styles_1.makeStyles(function (theme) { return ({
             duration: theme.transitions.duration.enteringScreen
         }),
         marginLeft: 0
+    },
+    bottomPush: {
+        position: 'fixed',
+        bottom: 0,
+        textAlign: 'center',
+        paddingBottom: 10
     }
 }); });
 exports.NavigationBar = function () {
@@ -103,15 +110,17 @@ exports.NavigationBar = function () {
             React.createElement(Toolbar_1["default"], null,
                 React.createElement(IconButton_1["default"], { color: "inherit", "aria-label": "open drawer", onClick: handleDrawerOpen, edge: "start", className: clsx_1["default"](classes.menuButton, open && classes.hide) },
                     React.createElement(Menu_1["default"], null)),
-                React.createElement(Typography_1["default"], { variant: "h6", noWrap: true }, "RC Connect"))),
+                React.createElement(Typography_1["default"], { variant: "h6", noWrap: true }, "Recurse Connect"))),
         React.createElement(Drawer_1["default"], { className: classes.drawer, variant: "persistent", anchor: "left", open: open, classes: {
                 paper: classes.drawerPaper
             } },
             React.createElement("div", { className: classes.drawerHeader },
                 React.createElement(IconButton_1["default"], { onClick: handleDrawerClose }, theme.direction === 'ltr' ? (React.createElement(ChevronLeft_1["default"], null)) : (React.createElement(ChevronRight_1["default"], null)))),
-            React.createElement(Divider_1["default"], null),
             React.createElement(List_1["default"], null, ['Home', 'Feed', 'Network', 'Discover'].map(function (text, index) { return (React.createElement(ListItem_1["default"], { button: true, key: text, component: react_router_dom_1.Link, to: text.toLowerCase() },
                 React.createElement(ListItemIcon_1["default"], null, [React.createElement(Home_1["default"], null), React.createElement(Chat_1["default"], null), React.createElement(People_1["default"], null), React.createElement(Explore_1["default"], null)][index]),
                 React.createElement(ListItemText_1["default"], { primary: text }))); })),
-            React.createElement(Divider_1["default"], null))));
+            React.createElement("div", { className: classes.bottomPush },
+                React.createElement(List_1["default"], null, ['Login', 'Settings'].map(function (text, index) { return (React.createElement(ListItem_1["default"], { button: true, key: text, component: react_router_dom_1.Link, to: text.toLowerCase() },
+                    React.createElement(ListItemIcon_1["default"], null, [React.createElement(Person_1["default"], null), React.createElement(Settings_1["default"], null)][index]),
+                    React.createElement(ListItemText_1["default"], { primary: text }))); }))))));
 };

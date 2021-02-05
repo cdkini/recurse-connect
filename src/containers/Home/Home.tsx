@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { NavigationBar } from '../../components/NavigationBar/NavigationBar';
+// import { FuzzySearchBar } from '../../components/FuzzySearchBar/FuzzySearchBar';
 
 interface Props {}
 

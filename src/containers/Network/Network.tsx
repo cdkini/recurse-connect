@@ -7,9 +7,6 @@ interface Props {
 }
 
 export const Network: React.FC<Props> = ({ profileID }) => {
-	const { useRef } = React;
-	const fgRef = useRef() as any;
-
 	const [graphData, setGraphData] = React.useState({ nodes: [], links: [] });
 	React.useEffect(() => {
 		fetch('/api/v1/graph/' + profileID.toString())
@@ -19,13 +16,20 @@ export const Network: React.FC<Props> = ({ profileID }) => {
 			});
 	}, []);
 
+	const { useRef } = React;
+	const fgRef = useRef() as any;
+
 	const handleNodeClick = (node: NodeObject) => {
 		fgRef.current.zoom(8, 2000);
 		fgRef.current.centerAt(node.x, node.y, 1000);
 	};
 
+	const handleNodeRightClick = (node: NodeObject) => {
+		console.log(node); // TODO: Open to implement cards
+	};
+
 	const handleBackgroundClick = () => {
-		fgRef.current.zoom(5, 2000);
+		fgRef.current.zoom(3, 2000);
 		fgRef.current.centerAt(0, 0, 1000);
 	};
 
@@ -42,14 +46,14 @@ export const Network: React.FC<Props> = ({ profileID }) => {
 				ref={fgRef}
 				graphData={graphData}
 				nodeLabel="name"
-				nodeAutoColorBy="id"
-				onNodeClick={handleNodeClick}
+				nodeAutoColorBy="name"
 				linkDirectionalParticles={2}
 				linkDirectionalParticleWidth={1.4}
+				onNodeClick={handleNodeClick}
+				onNodeRightClick={handleNodeRightClick}
 				onBackgroundClick={handleBackgroundClick}
 				onBackgroundRightClick={handleBackgroundRightClick}
 			/>
-			,
 		</div>
 	);
 };

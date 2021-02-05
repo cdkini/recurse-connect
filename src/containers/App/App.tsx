@@ -9,7 +9,7 @@ import {
 	ProtectedRoute,
 	ProtectedRouteProps,
 } from '../../components/ProtectedRoute/ProtectedRoute';
-import { Route, Switch } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { useSessionContext } from '../../contexts/SessionContext/SessionContext';
 
 // https://stackoverflow.com/questions/59422159/redirecting-a-user-to-the-page-they-requested-after-successful-authentication-wi/59423442#59423442

@@ -4,7 +4,6 @@ import Chat from '@material-ui/icons/Chat';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Explore from '@material-ui/icons/Explore';
 import Home from '@material-ui/icons/Home';
@@ -15,6 +14,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuIcon from '@material-ui/icons/Menu';
 import People from '@material-ui/icons/People';
+import Person from '@material-ui/icons/Person';
+import Settings from '@material-ui/icons/Settings';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
@@ -78,6 +79,12 @@ const useStyles = makeStyles(theme => ({
 		}),
 		marginLeft: 0,
 	},
+	bottomPush: {
+		position: 'fixed',
+		bottom: 0,
+		textAlign: 'center',
+		paddingBottom: 10,
+	},
 }));
 
 interface Props {}
@@ -115,7 +122,7 @@ export const NavigationBar: React.FC<Props> = () => {
 						<MenuIcon />
 					</IconButton>
 					<Typography variant="h6" noWrap>
-						RC Connect
+						Recurse Connect
 					</Typography>
 				</Toolbar>
 			</AppBar>
@@ -137,7 +144,6 @@ export const NavigationBar: React.FC<Props> = () => {
 						)}
 					</IconButton>
 				</div>
-				<Divider />
 				<List>
 					{['Home', 'Feed', 'Network', 'Discover'].map((text, index) => (
 						<ListItem
@@ -153,7 +159,21 @@ export const NavigationBar: React.FC<Props> = () => {
 						</ListItem>
 					))}
 				</List>
-				<Divider />
+				<div className={classes.bottomPush}>
+					<List>
+						{['Login', 'Settings'].map((text, index) => (
+							<ListItem
+								button
+								key={text}
+								component={Link}
+								to={text.toLowerCase()}
+							>
+								<ListItemIcon>{[<Person />, <Settings />][index]}</ListItemIcon>
+								<ListItemText primary={text} />
+							</ListItem>
+						))}
+					</List>
+				</div>
 			</Drawer>
 		</div>
 	);
