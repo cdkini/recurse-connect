@@ -1,6 +1,7 @@
 import * as React from 'react';
 import ForceGraph2D, { NodeObject } from 'react-force-graph-2d';
 import { NavigationBar } from '../../components/NavigationBar/NavigationBar';
+// import { RecurserCard } from '../../components/RecurserCard/RecurserCard';
 
 interface Props {
 	profileID: number;
