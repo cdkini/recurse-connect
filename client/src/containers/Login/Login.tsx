@@ -3,7 +3,7 @@ import { NavigationBar } from '../../components/NavigationBar/NavigationBar';
 
 interface Props {}
 
-export const Login: React.FC<Props> = (): JSX.Element => {
+export const Login: React.FC<Props> = () => {
 	const [temp, setTemp] = React.useState(0);
 	React.useEffect(() => {
 		fetch('/api/v1/login')

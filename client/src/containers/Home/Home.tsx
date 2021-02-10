@@ -1,6 +1,8 @@
 import * as React from 'react';
+// import { WelcomeCard } from '../../components/WelcomeCard/WelcomeCard';
 import { WelcomeCarousel } from '../../components/WelcomeCarousel/WelcomeCarousel';
 import { NavigationBar } from '../../components/NavigationBar/NavigationBar';
+// import { FuzzySearchBar } from '../../components/FuzzySearchBar/FuzzySearchBar';
 import { makeStyles } from '@material-ui/core/styles';
 import { CssBaseline, Grid } from '@material-ui/core';
 
@@ -18,8 +20,9 @@ const useStyles = makeStyles(() => ({
 
 interface Props {}
 
-export const Home: React.FC<Props> = (): JSX.Element => {
+export const Home: React.FC<Props> = () => {
 	const classes = useStyles();
+	// const theme = useTheme();
 	return (
 		<div className={classes.root}>
 			<CssBaseline />

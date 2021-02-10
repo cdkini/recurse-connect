@@ -8,9 +8,7 @@ export interface ProtectedRouteProps extends RouteProps {
 	setRedirectPathOnAuthentication: (path: string) => void;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = (
-	props,
-): JSX.Element => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = props => {
 	const currentLocation = useLocation();
 
 	let redirectPath = props.redirectPathOnAuthentication;

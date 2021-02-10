@@ -6,7 +6,7 @@ interface Props {
 	profileID: number;
 }
 
-export const FuzzySearchBar: React.FC<Props> = ({ profileID }): JSX.Element => {
+export const FuzzySearchBar: React.FC<Props> = ({ profileID }) => {
 	// const [graphData, setGraphData] = React.useState({ nodes: [], links: [] });
 	// React.useEffect(() => {
 	// 	fetch('/api/v1/graph/' + profileID.toString())

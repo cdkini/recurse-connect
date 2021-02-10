@@ -40,7 +40,7 @@ interface Props {
 	profileID: number;
 }
 
-export const RecurserCard: React.FC<Props> = ({ profileID }): JSX.Element => {
+export const RecurserCard: React.FC<Props> = ({ profileID }) => {
 	const [userData, setUserData] = React.useState({});
 	React.useEffect(() => {
 		fetch('/api/v1/users/' + profileID.toString())
