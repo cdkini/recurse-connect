@@ -7,7 +7,7 @@ interface Props {
 	profileID: number;
 }
 
-export const Network: React.FC<Props> = ({ profileID }) => {
+export const Network: React.FC<Props> = ({ profileID }): JSX.Element => {
 	const [graphData, setGraphData] = React.useState({ nodes: [], links: [] });
 	React.useEffect(() => {
 		fetch('/api/v1/graph/' + profileID.toString())

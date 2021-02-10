@@ -14,33 +14,33 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            maxWidth: 345,
-        },
-        media: {
-            height: 0,
-            paddingTop: '56.25%', // 16:9
-        },
-        expand: {
-            transform: 'rotate(0deg)',
-            marginLeft: 'auto',
-            transition: theme.transitions.create('transform', {
-                duration: theme.transitions.duration.shortest,
-            }),
-        },
-        avatar: {
-            width: theme.spacing(7),
-            height: theme.spacing(7),
-        },
-    }),
+	createStyles({
+		root: {
+			maxWidth: 345,
+		},
+		media: {
+			height: 0,
+			paddingTop: '56.25%', // 16:9
+		},
+		expand: {
+			transform: 'rotate(0deg)',
+			marginLeft: 'auto',
+			transition: theme.transitions.create('transform', {
+				duration: theme.transitions.duration.shortest,
+			}),
+		},
+		avatar: {
+			width: theme.spacing(7),
+			height: theme.spacing(7),
+		},
+	}),
 );
 
 interface Props {
-    profileID: number,
+	profileID: number;
 }
 
-export const RecurserCard: React.FC<Props> = ({ profileID }) => {
+export const RecurserCard: React.FC<Props> = ({ profileID }): JSX.Element => {
 	const [userData, setUserData] = React.useState({});
 	React.useEffect(() => {
 		fetch('/api/v1/users/' + profileID.toString())
@@ -49,43 +49,55 @@ export const RecurserCard: React.FC<Props> = ({ profileID }) => {
 				setUserData(data);
 			});
 	}, []);
-    console.log(userData)
+	console.log(userData);
 
-    const classes = useStyles();
+	const classes = useStyles();
 
-    return (
-        <Card className={classes.root}>
-            <CardHeader
-                avatar={
-                    <Avatar aria-label="recipe" className={classes.avatar} src="https://assets.recurse.com/rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYzQ9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--73e1a6bd523e701f4c4c92f06b33d99636886370/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9MY21WemFYcGxTU0lNTVRVd2VERTFNQVk2QmtWVSIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--d8f54fe211cbe3254ece86a55c83c4d5b374eaab/IMG-2975.jpg">
-                        R
-          </Avatar>
-                }
-                action={
-                    <IconButton aria-label="settings">
-                        <MoreVertIcon />
-                    </IconButton>
-                }
-                title="Chetan Kini"
-                subheader="Winter 2, 2021"
-            />
-            <CardContent>
-                <Typography variant="body2" color="textSecondary" component="p">Interests: Python</Typography>
-                <Typography variant="body2" color="textSecondary" component="p">Text goes here!</Typography>
-                <Typography variant="body2" color="textSecondary" component="p">Text goes here!</Typography>
-            </CardContent>
-            <CardActions disableSpacing>
-                <IconButton>
-                    <GitHubIcon />
-                </IconButton>
-                <IconButton>
-                    <TwitterIcon />
-                </IconButton>
-                <IconButton>
-                    <EmailIcon />
-                </IconButton>
-                <Button variant="contained" className={classes.expand}>Learn more</Button>
-            </CardActions>
-        </Card>
-    );
-}
+	return (
+		<Card className={classes.root}>
+			<CardHeader
+				avatar={
+					<Avatar
+						aria-label="recipe"
+						className={classes.avatar}
+						src="https://assets.recurse.com/rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYzQ9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--73e1a6bd523e701f4c4c92f06b33d99636886370/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9MY21WemFYcGxTU0lNTVRVd2VERTFNQVk2QmtWVSIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--d8f54fe211cbe3254ece86a55c83c4d5b374eaab/IMG-2975.jpg"
+					>
+						R
+					</Avatar>
+				}
+				action={
+					<IconButton aria-label="settings">
+						<MoreVertIcon />
+					</IconButton>
+				}
+				title="Chetan Kini"
+				subheader="Winter 2, 2021"
+			/>
+			<CardContent>
+				<Typography variant="body2" color="textSecondary" component="p">
+					Interests: Python
+				</Typography>
+				<Typography variant="body2" color="textSecondary" component="p">
+					Text goes here!
+				</Typography>
+				<Typography variant="body2" color="textSecondary" component="p">
+					Text goes here!
+				</Typography>
+			</CardContent>
+			<CardActions disableSpacing>
+				<IconButton>
+					<GitHubIcon />
+				</IconButton>
+				<IconButton>
+					<TwitterIcon />
+				</IconButton>
+				<IconButton>
+					<EmailIcon />
+				</IconButton>
+				<Button variant="contained" className={classes.expand}>
+					Learn more
+				</Button>
+			</CardActions>
+		</Card>
+	);
+};

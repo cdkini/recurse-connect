@@ -90,7 +90,7 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {}
 
-export const NavigationBar: React.FC<Props> = () => {
+export const NavigationBar: React.FC<Props> = (): JSX.Element => {
 	const classes = useStyles();
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(false);

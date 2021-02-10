@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {}
 
-export const WelcomeCarousel: React.FC<Props> = ({}) => {
+export const WelcomeCarousel: React.FC<Props> = ({}): JSX.Element => {
 	const classes = useStyles();
 	const [state, setState] = React.useState({ open: false });
 

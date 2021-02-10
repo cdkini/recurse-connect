@@ -2,12 +2,11 @@ import * as React from 'react';
 // import Autocomplete from '@material-ui/lab/Autocomplete';
 // import { TextField } from '@material-ui/core';
 
-
 interface Props {
 	profileID: number;
 }
 
-export const FuzzySearchBar: React.FC<Props> = ({ profileID} ) => {
+export const FuzzySearchBar: React.FC<Props> = ({ profileID }): JSX.Element => {
 	// const [graphData, setGraphData] = React.useState({ nodes: [], links: [] });
 	// React.useEffect(() => {
 	// 	fetch('/api/v1/graph/' + profileID.toString())
@@ -17,7 +16,5 @@ export const FuzzySearchBar: React.FC<Props> = ({ profileID} ) => {
 	// 		});
 	// }, []);
 
-	return (
-    <h1>{ profileID }</h1>
-	);
+	return <h1>{profileID}</h1>;
 };

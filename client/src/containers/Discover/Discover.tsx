@@ -3,7 +3,7 @@ import { NavigationBar } from '../../components/NavigationBar/NavigationBar';
 
 interface Props {}
 
-export const Discover: React.FC<Props> = () => {
+export const Discover: React.FC<Props> = (): JSX.Element => {
 	return (
 		<div>
 			<NavigationBar />
