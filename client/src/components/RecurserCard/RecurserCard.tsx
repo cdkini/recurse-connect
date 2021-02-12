@@ -1,22 +1,23 @@
 import * as React from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import TwitterIcon from '@material-ui/icons/Twitter';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 import EmailIcon from '@material-ui/icons/Email';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import GitHubIcon from '@material-ui/icons/GitHub';
+import IconButton from '@material-ui/core/IconButton';
+import TwitterIcon from '@material-ui/icons/Twitter';
+import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { GraphNode } from '../../types/GraphObject';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
-			maxWidth: 345,
+			maxWidth: 400,
+			width: 400,
 		},
 		media: {
 			height: 0,
@@ -37,41 +38,45 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface Props {
-	profileID: number;
+	node: GraphNode;
 }
 
-export const RecurserCard: React.FC<Props> = ({ profileID }) => {
-	const [userData, setUserData] = React.useState({});
-	React.useEffect(() => {
-		fetch('/api/v1/users/' + profileID.toString())
-			.then(res => res.json())
-			.then(data => {
-				setUserData(data);
-			});
-	}, []);
-	console.log(userData);
-
+export const RecurserCard: React.FC<Props> = (props: Props) => {
 	const classes = useStyles();
+
+	const handlePageChange = (url: string | undefined) => {
+		return function() {
+			if (typeof url === 'string') {
+				window.open('http://' + url, '_blank');
+			} else {
+				// TODO: Alert saying not available!
+			}
+		};
+	};
+
+	const handleEmail = () => {
+		let email = props.node.email;
+		if (typeof email === 'string') {
+			// Alert saying email
+		} else {
+			// Alert saying no email
+		}
+	};
 
 	return (
 		<Card className={classes.root}>
 			<CardHeader
 				avatar={
 					<Avatar
-						aria-label="recipe"
+						aria-label="profilePic"
 						className={classes.avatar}
-						src="https://assets.recurse.com/rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYzQ9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--73e1a6bd523e701f4c4c92f06b33d99636886370/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9MY21WemFYcGxTU0lNTVRVd2VERTFNQVk2QmtWVSIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--d8f54fe211cbe3254ece86a55c83c4d5b374eaab/IMG-2975.jpg"
+						src={props.node.imagePath}
 					>
-						R
+						RC
 					</Avatar>
 				}
-				action={
-					<IconButton aria-label="settings">
-						<MoreVertIcon />
-					</IconButton>
-				}
-				title="Chetan Kini"
-				subheader="Winter 2, 2021"
+				title={props.node.name}
+				subheader={props.node.batch}
 			/>
 			<CardContent>
 				<Typography variant="body2" color="textSecondary" component="p">
@@ -86,13 +91,13 @@ export const RecurserCard: React.FC<Props> = ({ profileID }) => {
 			</CardContent>
 			<CardActions disableSpacing>
 				<IconButton>
-					<GitHubIcon />
+					<GitHubIcon onClick={handlePageChange(props.node.github)} />
 				</IconButton>
 				<IconButton>
-					<TwitterIcon />
+					<TwitterIcon onClick={handlePageChange(props.node.twitter)} />
 				</IconButton>
 				<IconButton>
-					<EmailIcon />
+					<EmailIcon onClick={handleEmail} />
 				</IconButton>
 				<Button variant="contained" className={classes.expand}>
 					Learn more
