@@ -6,12 +6,12 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import EmailIcon from '@material-ui/icons/Email';
 import GitHubIcon from '@material-ui/icons/GitHub';
-import IconButton from '@material-ui/core/IconButton';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { GraphNode } from '../../types/GraphObject';
+import { SocialMediaIcon } from '../SocialMediaIcon/SocialMediaIcon';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -34,6 +34,12 @@ const useStyles = makeStyles((theme: Theme) =>
 			width: theme.spacing(7),
 			height: theme.spacing(7),
 		},
+		popover: {
+			pointerEvents: 'none',
+		},
+		paper: {
+			padding: theme.spacing(1),
+		},
 	}),
 );
 
@@ -44,23 +50,16 @@ interface Props {
 export const RecurserCard: React.FC<Props> = (props: Props) => {
 	const classes = useStyles();
 
+	const containsContent = (content: string | undefined) => {
+		return typeof content === 'string' && content.length > 0;
+	};
+
 	const handlePageChange = (url: string | undefined) => {
 		return function() {
 			if (typeof url === 'string') {
 				window.open('http://' + url, '_blank');
-			} else {
-				// TODO: Alert saying not available!
 			}
 		};
-	};
-
-	const handleEmail = () => {
-		let email = props.node.email;
-		if (typeof email === 'string') {
-			// Alert saying email
-		} else {
-			// Alert saying no email
-		}
 	};
 
 	return (
@@ -76,30 +75,46 @@ export const RecurserCard: React.FC<Props> = (props: Props) => {
 					</Avatar>
 				}
 				title={props.node.name}
-				subheader={props.node.batch}
+				subheader={props.node.batchName}
 			/>
 			<CardContent>
 				<Typography variant="body2" color="textSecondary" component="p">
-					Interests: Python
+					Interests: {props.node.interests}
 				</Typography>
 				<Typography variant="body2" color="textSecondary" component="p">
-					Text goes here!
+					During RC: {props.node.duringRc}
 				</Typography>
 				<Typography variant="body2" color="textSecondary" component="p">
 					Text goes here!
 				</Typography>
 			</CardContent>
 			<CardActions disableSpacing>
-				<IconButton>
-					<GitHubIcon onClick={handlePageChange(props.node.github)} />
-				</IconButton>
-				<IconButton>
-					<TwitterIcon onClick={handlePageChange(props.node.twitter)} />
-				</IconButton>
-				<IconButton>
-					<EmailIcon onClick={handleEmail} />
-				</IconButton>
-				<Button variant="contained" className={classes.expand}>
+				<SocialMediaIcon
+					contents={props.node.github}
+					icon={<GitHubIcon />}
+					isEmpty={!containsContent(props.node.github)}
+					isClickable={containsContent(props.node.github)}
+					handlePageChange={handlePageChange}
+				/>
+				<SocialMediaIcon
+					contents={props.node.twitter}
+					icon={<TwitterIcon />}
+					isEmpty={!containsContent(props.node.twitter)}
+					isClickable={containsContent(props.node.twitter)}
+					handlePageChange={handlePageChange}
+				/>
+				<SocialMediaIcon
+					contents={props.node.email}
+					icon={<EmailIcon />}
+					isEmpty={!containsContent(props.node.email)}
+					isClickable={false}
+					handlePageChange={handlePageChange}
+				/>
+				<Button
+					variant="contained"
+					className={classes.expand}
+					onClick={handlePageChange(props.node.profilePath)}
+				>
 					Learn more
 				</Button>
 			</CardActions>

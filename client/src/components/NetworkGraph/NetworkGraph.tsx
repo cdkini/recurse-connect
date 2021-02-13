@@ -51,6 +51,7 @@ export const NetworkGraph: React.FC<Props> = (props: Props) => {
 
 	const handleNodeRightClick = (node: NodeObject) => {
 		setCurrNode(node as GraphNode);
+		console.log(node);
 		handleDialogOpen();
 	};
 
