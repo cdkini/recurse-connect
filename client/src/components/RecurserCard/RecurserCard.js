@@ -17,8 +17,8 @@ var SocialMediaIcon_1 = require('../SocialMediaIcon/SocialMediaIcon');
 var useStyles = styles_1.makeStyles(function(theme) {
 	return styles_1.createStyles({
 		root: {
-			maxWidth: 400,
-			width: 400,
+			maxWidth: 800,
+			width: 500,
 		},
 		media: {
 			height: 0,
@@ -68,8 +68,10 @@ exports.RecurserCard = function(props) {
 				},
 				'RC',
 			),
-			title: props.node.name,
-			subheader: props.node.batchName,
+			title: props.node.name + ' (' + props.node.batchShortName + ')',
+			subheader: props.node.company
+				? props.node.location + ' | @' + props.node.company
+				: props.node.location,
 		}),
 		React.createElement(
 			CardContent_1['default'],
@@ -77,19 +79,43 @@ exports.RecurserCard = function(props) {
 			React.createElement(
 				Typography_1['default'],
 				{ variant: 'body2', color: 'textSecondary', component: 'p' },
-				'Interests: ',
-				props.node.interests,
+				React.createElement('b', null, 'Interests:'),
+				' ',
+				props.node.interests
+					? props.node.interests
+					: React.createElement(
+							'i',
+							null,
+							'Set up a coffee chat and see what you have in common!',
+					  ),
 			),
+			React.createElement('br', null),
 			React.createElement(
 				Typography_1['default'],
 				{ variant: 'body2', color: 'textSecondary', component: 'p' },
-				'During RC: ',
-				props.node.duringRc,
+				React.createElement('b', null, 'Before RC:'),
+				' ',
+				props.node.beforeRc
+					? props.node.beforeRc
+					: React.createElement(
+							'i',
+							null,
+							'Send a ping over Zulip to get to know your fellow Recurser!',
+					  ),
 			),
+			React.createElement('br', null),
 			React.createElement(
 				Typography_1['default'],
 				{ variant: 'body2', color: 'textSecondary', component: 'p' },
-				'Text goes here!',
+				React.createElement('b', null, 'During RC:'),
+				' ',
+				props.node.duringRc
+					? props.node.duringRc
+					: React.createElement(
+							'i',
+							null,
+							'Why not discuss plans over a pairing session or two?',
+					  ),
 			),
 		),
 		React.createElement(

@@ -16,8 +16,8 @@ import { SocialMediaIcon } from '../SocialMediaIcon/SocialMediaIcon';
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
-			maxWidth: 400,
-			width: 400,
+			maxWidth: 800,
+			width: 500,
 		},
 		media: {
 			height: 0,
@@ -74,18 +74,39 @@ export const RecurserCard: React.FC<Props> = (props: Props) => {
 						RC
 					</Avatar>
 				}
-				title={props.node.name}
-				subheader={props.node.batchName}
+				title={`${props.node.name} (${props.node.batchShortName})`}
+				subheader={
+					props.node.company
+						? `${props.node.location} | @${props.node.company}`
+						: props.node.location
+				}
 			/>
 			<CardContent>
 				<Typography variant="body2" color="textSecondary" component="p">
-					Interests: {props.node.interests}
+					<b>Interests:</b>{' '}
+					{props.node.interests ? (
+						props.node.interests
+					) : (
+						<i>Set up a coffee chat and see what you have in common!</i>
+					)}
 				</Typography>
+				<br />
 				<Typography variant="body2" color="textSecondary" component="p">
-					During RC: {props.node.duringRc}
+					<b>Before RC:</b>{' '}
+					{props.node.beforeRc ? (
+						props.node.beforeRc
+					) : (
+						<i>Send a ping over Zulip to get to know your fellow Recurser!</i>
+					)}
 				</Typography>
+				<br />
 				<Typography variant="body2" color="textSecondary" component="p">
-					Text goes here!
+					<b>During RC:</b>{' '}
+					{props.node.duringRc ? (
+						props.node.duringRc
+					) : (
+						<i>Why not discuss plans over a pairing session or two?</i>
+					)}
 				</Typography>
 			</CardContent>
 			<CardActions disableSpacing>
