@@ -1,7 +1,7 @@
-from . import app, oauth, utils
+from . import oauth, utils, app
 from flask import redirect, url_for, session
 import requests
-
+import humps
 
 recurse = oauth.register(
     name="recurse",
@@ -47,6 +47,15 @@ def auth():
 
 
 @app.route("/api/v1/graph/<profile_id>", methods=["GET"])
-def api_graph(profile_id):
+def get_graph_data(profile_id):
     data = utils.get_graph_data(profile_id)
+    for key in data:
+        data[key] = humps.camelize(data[key])
+    return data
+
+
+@app.route("/api/v1/users/<profile_id>", methods=["GET"])
+def get_user_data(profile_id):
+    data = utils.get_user_data(profile_id)
+    humps.camelize(data)
     return data

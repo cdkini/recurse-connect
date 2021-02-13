@@ -1,9 +1,8 @@
 import requests
 import time
 
-from datetime import datetime
-
 from api import db, models, secrets
+from datetime import datetime
 
 connections = 0
 
@@ -96,7 +95,19 @@ def _update_profile_table(profile, db):
     name = profile.get("name")
     profile_path = f"www.recurse.com/directory/{profile.get('slug')}"
     image_path = profile.get("image_path")
+
+    bio = profile.get("bio_hl")
     interests = profile.get("interests_hl")
+    before_rc = profile.get("before_rc_hl")
+    during_rc = profile.get("during_rc_hl")
+
+    email = profile.get("email_hl")
+    github = profile.get("github")
+    if github:
+        github = f"github.com/{github}"
+    twitter = profile.get("twitter")
+    if twitter:
+        twitter = f"twitter.com/{twitter}"
 
     location = profile.get("current_location")
     location_id = None if not location else location.get("id")
@@ -112,6 +123,12 @@ def _update_profile_table(profile, db):
         interests=interests,
         location_id=location_id,
         company_id=company_id,
+        before_rc=before_rc,
+        bio=bio,
+        during_rc=during_rc,
+        email=email,
+        github=github,
+        twitter=twitter
     )
     db.session.merge(profile_entry)
 

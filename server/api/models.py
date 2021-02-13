@@ -1,17 +1,19 @@
 from . import db
 from sqlalchemy.inspection import inspect
 
-from sqlalchemy import or_
-
 
 class Serializer(object):
-
-    def serialize(self):
-        return {obj: getattr(self, obj) for obj in inspect(self).attrs.keys()}
 
     @staticmethod
     def serialize_list(obj_list):
         return [obj.serialize() for obj in obj_list]
+
+    def serialize(self):
+        return {self._to_camel_case(obj): getattr(self, obj) for obj in inspect(self).attrs.keys()}
+
+    def _to_camel_case(self, snake_str):
+        components = snake_str.split('_')
+        return components[0] + ''.join(x.title() for x in components[1:])
 
 
 class Profile(db.Model, Serializer):
@@ -19,9 +21,15 @@ class Profile(db.Model, Serializer):
     name = db.Column(db.String(64))
     profile_path = db.Column(db.String(128))
     image_path = db.Column(db.String(256))
-    interests = db.Column(db.String(256))
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"))
     company_id = db.Column(db.Integer, db.ForeignKey("company.id"))
+    bio = db.Column(db.String(512))
+    interests = db.Column(db.String(512))
+    before_rc = db.Column(db.String(512))
+    during_rc = db.Column(db.String(512))
+    email = db.Column(db.String(64))
+    github = db.Column(db.String(64))
+    twitter = db.Column(db.String(64))
 
     def __repr__(self):
         return str(self.__dict__)
