@@ -1,6 +1,6 @@
 import { NodeObject } from 'react-force-graph-2d';
 
-export interface GraphNode extends NodeObject {
+export interface RecurserNode extends NodeObject {
 	id: string | number | undefined;
 	name: string | undefined;
 	profilePath: string | undefined;
@@ -20,13 +20,13 @@ export interface GraphNode extends NodeObject {
 	end_date: Date | undefined;
 }
 
-export interface GraphEdge {
+export interface RecurserEdge {
 	source: number;
 	target: number;
 	weight: number;
 }
 
-export interface GraphObject {
-	nodes: Array<GraphNode>;
-	links: Array<GraphEdge>;
+export interface RecurserGraph {
+	nodes: Array<RecurserNode>;
+	links: Array<RecurserEdge>;
 }

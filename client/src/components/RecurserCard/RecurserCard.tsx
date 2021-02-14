@@ -10,7 +10,7 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { GraphNode } from '../../types/GraphObject';
+import { RecurserNode } from '../../types/RecurserGraph';
 import { SocialMediaIcon } from '../SocialMediaIcon/SocialMediaIcon';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface Props {
-	node: GraphNode;
+	node: RecurserNode;
 }
 
 export const RecurserCard: React.FC<Props> = (props: Props) => {
@@ -82,6 +82,10 @@ export const RecurserCard: React.FC<Props> = (props: Props) => {
 				}
 			/>
 			<CardContent>
+				<Typography variant="body2" color="textSecondary" component="p">
+					{props.node.bio ? <i> "{props.node.bio}" </i> : null}
+				</Typography>
+				{props.node.bio ? <br /> : null}
 				<Typography variant="body2" color="textSecondary" component="p">
 					<b>Interests:</b>{' '}
 					{props.node.interests ? (
