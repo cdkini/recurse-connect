@@ -1,6 +1,5 @@
 import * as React from 'react';
 import AppBar from '@material-ui/core/AppBar';
-import Chat from '@material-ui/icons/Chat';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -16,6 +15,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import People from '@material-ui/icons/People';
 import Person from '@material-ui/icons/Person';
 import Settings from '@material-ui/icons/Settings';
+import InsertChart from '@material-ui/icons/InsertChart';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
@@ -146,7 +146,7 @@ export const NavigationBar: React.FC<Props> = () => {
 					</IconButton>
 				</div>
 				<List>
-					{['Home', 'Feed', 'Network', 'Discover'].map((text, index) => (
+					{['Home', 'Network', 'Discover', 'Stats'].map((text, index) => (
 						<ListItem
 							button
 							key={text}
@@ -154,7 +154,7 @@ export const NavigationBar: React.FC<Props> = () => {
 							to={text.toLowerCase()}
 						>
 							<ListItemIcon>
-								{[<Home />, <Chat />, <People />, <Explore />][index]}
+								{[<Home />, <People />, <Explore />, <InsertChart />][index]}
 							</ListItemIcon>
 							<ListItemText primary={text} />
 						</ListItem>

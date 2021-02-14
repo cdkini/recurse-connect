@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Discover } from '../Discover/Discover';
 import { Home } from '../Home/Home';
 import { Network } from '../Network/Network';
-import { Feed } from '../Feed/Feed';
+import { Stats } from '../Stats/Stats';
 import { Login } from '../Login/Login';
 import {
 	ProtectedRoute,
@@ -37,9 +37,9 @@ const App: React.FC = () => {
 				<Route path={['/', '/home']} exact component={Home} />
 				<ProtectedRoute
 					{...defaultProtectedRouteProps}
-					path="/feed"
+					path="/stats"
 					exact
-					component={Feed}
+					component={Stats}
 				/>
 				<Route
 					path="/network"
