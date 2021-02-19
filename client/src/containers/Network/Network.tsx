@@ -34,6 +34,9 @@ export const Network: React.FC<Props> = (props: Props) => {
 			});
 	}, []);
 
+	const { useRef } = React;
+	const fgRef = useRef() as any;
+
 	return (
 		<div>
 			<NavigationBar />
@@ -43,8 +46,15 @@ export const Network: React.FC<Props> = (props: Props) => {
 				setGraphData={setGraphData}
 				currNode={currNode}
 				setCurrNode={setCurrNode}
+				fgRef={fgRef}
 			/>
-			<FuzzySearchBar graphData={graphData} />
+			<FuzzySearchBar
+				graphData={graphData}
+				setGraphData={setGraphData}
+				currNode={currNode}
+				setCurrNode={setCurrNode}
+				fgRef={fgRef}
+			/>
 		</div>
 	);
 };

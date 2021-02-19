@@ -18,6 +18,7 @@ export interface RecurserNode extends NodeObject {
 	batchShortName: string | undefined;
 	start_date: Date | undefined;
 	end_date: Date | undefined;
+	color: string | undefined;
 }
 
 export interface RecurserEdge {
