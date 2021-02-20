@@ -3,6 +3,7 @@ import { NavigationBar } from '../../components/NavigationBar/NavigationBar';
 import { NetworkGraph } from '../../components/NetworkGraph/NetworkGraph';
 import { FuzzySearchBar } from '../../components/FuzzySearchBar/FuzzySearchBar';
 import { RecurserGraph, RecurserNode } from '../../types/RecurserGraph';
+import { NetworkContext } from '../../contexts/NetworkContext/NetworkContext';
 
 interface Props {
 	profileId: number;
@@ -38,23 +39,12 @@ export const Network: React.FC<Props> = (props: Props) => {
 	const fgRef = useRef() as any;
 
 	return (
-		<div>
+		<NetworkContext.Provider
+			value={{ fgRef, graphData, setGraphData, currNode, setCurrNode }}
+		>
 			<NavigationBar />
-			<NetworkGraph
-				profileId={props.profileId}
-				graphData={graphData}
-				setGraphData={setGraphData}
-				currNode={currNode}
-				setCurrNode={setCurrNode}
-				fgRef={fgRef}
-			/>
-			<FuzzySearchBar
-				graphData={graphData}
-				setGraphData={setGraphData}
-				currNode={currNode}
-				setCurrNode={setCurrNode}
-				fgRef={fgRef}
-			/>
-		</div>
+			<NetworkGraph />
+			<FuzzySearchBar />
+		</NetworkContext.Provider>
 	);
 };

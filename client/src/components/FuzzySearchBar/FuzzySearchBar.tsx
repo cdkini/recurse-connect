@@ -12,9 +12,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Toolbar from '@material-ui/core/Toolbar';
 import { FormHelperText, TextField } from '@material-ui/core';
-import { RecurserGraph, RecurserNode } from '../../types/RecurserGraph';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { FuzzySearchContext } from '../../contexts/FuzzySearchContext/FuzzySearchContext';
 import { FuzzySearchResults } from '../FuzzySearchResults/FuzzySearchResults';
+import { RecurserNode } from '../../types/RecurserGraph';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { NetworkContext } from '../../contexts/NetworkContext/NetworkContext';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -63,16 +65,11 @@ const criteria = [
 	'duringRc',
 ];
 
-interface Props {
-	graphData: RecurserGraph;
-	setGraphData: React.Dispatch<React.SetStateAction<RecurserGraph>>;
-	currNode: RecurserNode;
-	setCurrNode: (node: RecurserNode) => void;
-	fgRef: any;
-}
+interface Props {}
 
-export const FuzzySearchBar: React.FC<Props> = props => {
+export const FuzzySearchBar: React.FC<Props> = () => {
 	const classes = useStyles();
+	const { fgRef, currNode, graphData } = React.useContext(NetworkContext);
 
 	const [openDialog, setOpenDialog] = React.useState<boolean>(false);
 	const [searchCriteria, setSearchCriteria] = React.useState<Array<string>>([]);
@@ -86,11 +83,11 @@ export const FuzzySearchBar: React.FC<Props> = props => {
 	const [
 		recurserSearchValue,
 		setRecurserSearchValue,
-	] = React.useState<RecurserNode | null>(props.currNode);
+	] = React.useState<RecurserNode | null>(currNode);
 	const [recurserInputValue, setRecurserInputValue] = React.useState('');
 
 	const fuse = React.useMemo(() => {
-		return new Fuse(props.graphData.nodes, {
+		return new Fuse(graphData.nodes, {
 			includeScore: true,
 			keys: searchCriteria,
 		});
@@ -117,96 +114,95 @@ export const FuzzySearchBar: React.FC<Props> = props => {
 
 	const handleRecurserSearchSubmit = (event: React.KeyboardEvent) => {
 		if (event.keyCode === 13 && recurserSearchValue) {
-			props.fgRef.current.zoom(8, 2000);
-			props.fgRef.current.centerAt(
+			fgRef.current.centerAt(
 				recurserSearchValue.x,
 				recurserSearchValue.y,
-				1000,
+				2000,
 			);
+			fgRef.current.zoom(8, 2000);
 		}
 	};
 
 	return (
-		<div className={classes.root}>
-			<FuzzySearchResults
-				graphData={props.graphData}
-				setGraphData={props.setGraphData}
-				currNode={props.currNode}
-				setCurrNode={props.setCurrNode}
-				fgRef={props.fgRef}
-				searchResults={searchResults}
-				setSearchResults={setSearchResults}
-				selectedResults={selectedResults}
-				setSelectedResults={setSelectedResults}
-				openDialog={openDialog}
-				setOpenDialog={setOpenDialog}
-			/>
-			<AppBar className={classes.appBar} position="static">
-				<Toolbar>
-					<IconButton
-						edge="start"
-						className={classes.menuButton}
-						color="inherit"
-						aria-label="menu"
-					>
-						<FormControl className={classes.formControl}>
-							<InputLabel>Criteria</InputLabel>
-							<Select
-								multiple
-								value={searchCriteria}
-								onChange={handleCriteriaChange}
-								input={<Input />}
-								renderValue={selected => (selected as string[]).join(', ')}
-								MenuProps={MenuProps}
-							>
-								{criteria.map(criterion => (
-									<MenuItem key={criterion} value={criterion}>
-										<Checkbox
-											checked={searchCriteria.indexOf(criterion) > -1}
-										/>
-										<ListItemText primary={criterion} />
-									</MenuItem>
-								))}
-							</Select>
-							<FormHelperText>What fields to search through</FormHelperText>
-						</FormControl>
-						<FormControl className={classes.formControl}>
-							<TextField
-								onChange={handleQueryChange}
-								onKeyDown={handleDialogOpen}
-								label="Query"
-							/>
-							<FormHelperText>
-								Your search query <i>(Enter to submit)</i>
-							</FormHelperText>
-						</FormControl>
-					</IconButton>
-					<Autocomplete
-						value={recurserSearchValue}
-						onChange={(_event: any, newValue: RecurserNode | null) => {
-							setRecurserSearchValue(newValue);
-						}}
-						inputValue={recurserInputValue}
-						onInputChange={(_event, newInputValue) => {
-							setRecurserInputValue(newInputValue);
-						}}
-						id="controllable-states-demo"
-						options={props.graphData.nodes}
-						getOptionLabel={option =>
-							`${option.name} (${option.batchShortName})`
-						}
-						style={{ width: 300 }}
-						renderInput={params => (
-							<TextField
-								{...params}
-								label="Search by Recurser name"
-								variant="outlined"
-							/>
-						)}
-						onKeyDown={handleRecurserSearchSubmit}
-					/>
-				</Toolbar>
-			</AppBar>
-		</div>
+		<FuzzySearchContext.Provider
+			value={{
+				searchResults,
+				setSearchResults,
+				selectedResults,
+				setSelectedResults,
+				openDialog,
+				setOpenDialog,
+			}}
+		>
+			<div className={classes.root}>
+				<FuzzySearchResults />
+				<AppBar className={classes.appBar} position="static">
+					<Toolbar>
+						<IconButton
+							edge="start"
+							className={classes.menuButton}
+							color="inherit"
+							aria-label="menu"
+						>
+							<FormControl className={classes.formControl}>
+								<InputLabel>Criteria</InputLabel>
+								<Select
+									multiple
+									value={searchCriteria}
+									onChange={handleCriteriaChange}
+									input={<Input />}
+									renderValue={selected => (selected as string[]).join(', ')}
+									MenuProps={MenuProps}
+								>
+									{criteria.map(criterion => (
+										<MenuItem key={criterion} value={criterion}>
+											<Checkbox
+												checked={searchCriteria.indexOf(criterion) > -1}
+											/>
+											<ListItemText primary={criterion} />
+										</MenuItem>
+									))}
+								</Select>
+								<FormHelperText>What fields to search through</FormHelperText>
+							</FormControl>
+							<FormControl className={classes.formControl}>
+								<TextField
+									onChange={handleQueryChange}
+									onKeyDown={handleDialogOpen}
+									label="Query"
+								/>
+								<FormHelperText>
+									Your search query <i>(Enter to submit)</i>
+								</FormHelperText>
+							</FormControl>
+						</IconButton>
+						<Autocomplete
+							value={recurserSearchValue}
+							onChange={(_event: any, newValue: RecurserNode | null) => {
+								setRecurserSearchValue(newValue);
+							}}
+							inputValue={recurserInputValue}
+							onInputChange={(_event, newInputValue) => {
+								setRecurserInputValue(newInputValue);
+							}}
+							id="controllable-states-demo"
+							options={graphData.nodes}
+							getOptionLabel={option =>
+								`${option.name} (${option.batchShortName})`
+							}
+							style={{ width: 300 }}
+							renderInput={params => (
+								<TextField
+									{...params}
+									label="Search by Recurser name"
+									variant="outlined"
+								/>
+							)}
+							onKeyDown={handleRecurserSearchSubmit}
+						/>
+					</Toolbar>
+				</AppBar>
+			</div>
+		</FuzzySearchContext.Provider>
 	);
 };
