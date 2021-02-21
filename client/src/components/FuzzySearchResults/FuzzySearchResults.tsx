@@ -92,20 +92,19 @@ export const FuzzySearchResults: React.FC<Props> = () => {
 	};
 
 	const handleVisualizeButtonClick = () => {
-		let newGraphData = { ...graphData };
 		let selectedNodes = new Set<RecurserNode>();
 		selectedResults.forEach(res => selectedNodes.add(res.item));
 
-		for (let i = 0; i < newGraphData.nodes.length; i++) {
-			let currNode = newGraphData.nodes[i];
+		for (let i = 0; i < graphData.nodes.length; i++) {
+			let currNode = graphData.nodes[i];
 			if (selectedNodes.has(currNode)) {
-				newGraphData.nodes[i].color = '#3dc06c';
+				graphData.nodes[i].color = '#3dc06c';
 			} else {
-				newGraphData.nodes[i].color = '#000000';
+				graphData.nodes[i].color = '#000000';
 			}
 		}
 
-		setGraphData(newGraphData);
+		setGraphData(graphData);
 		setOpenDialog(false);
 	};
 
@@ -228,7 +227,7 @@ export const FuzzySearchResults: React.FC<Props> = () => {
 				</List>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={handleVisualizeButtonClick}>Visualize</Button>
+				<Button onClick={handleVisualizeButtonClick}>Connect</Button>
 			</DialogActions>
 		</Dialog>
 	);

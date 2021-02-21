@@ -4,14 +4,18 @@ import { RecurserNode } from '../../types/RecurserGraph';
 import { Dialog } from '@material-ui/core';
 import { RecurserCard } from '../RecurserCard/RecurserCard';
 import { NetworkContext } from '../../contexts/NetworkContext/NetworkContext';
+import { NetworkGraphContext } from '../../contexts/NetworkGraphContext/NetworkGraphContext';
 
 interface Props {}
 
 export const NetworkGraph: React.FC<Props> = () => {
 	const [open, setOpen] = React.useState(false);
-	const { fgRef, graphData, currNode, setCurrNode } = React.useContext(
-		NetworkContext,
-	);
+	const { fgRef, graphData, userNode } = React.useContext(NetworkContext);
+	const [focusedNode, setFocusedNode] = React.useState(userNode);
+	const [alertMessage, setAlertMessage] = React.useState('');
+	const [alertSeverity, setAlertSeverity] = React.useState<
+		'error' | 'warning' | 'info' | 'success' | undefined
+	>(undefined);
 
 	const handleDialogOpen = () => {
 		setOpen(true);
@@ -26,7 +30,7 @@ export const NetworkGraph: React.FC<Props> = () => {
 	};
 
 	const handleNodeRightClick = (node: NodeObject) => {
-		setCurrNode(node as RecurserNode);
+		setFocusedNode(node as RecurserNode);
 		handleDialogOpen();
 	};
 
@@ -40,71 +44,26 @@ export const NetworkGraph: React.FC<Props> = () => {
 		fgRef.current.centerAt(0, 0, 1000);
 	};
 
-	// function getNodeMap() {
-	//     return new Map<string | number | undefined, RecurserNode>(
-	//         graphData.nodes.map(obj => [obj.id, obj])
-	//     );
-	// }
-
-	// function getLinkMap() {
-	//     let linkMap: Map<string | number | undefined, Array<RecurserEdge>> = new Map();
-	//     let graphLinks: Array<RecurserEdge> = graphData.links;
-	//     for (let i = 0; i < graphLinks.length; i++) {
-	//         let link: RecurserEdge = graphLinks[i];
-	//         if (linkMap.has(link.source)) {
-	//             linkMap.set(link.source, linkMap.get(link.source).push(link))
-	//         } else {
-	//             linkMap.set(link.source, [link]);
-	//         }
-	//     }
-	// }
-
-	// TEST CODE BELOW
-
-	// const [highlightNodes, setHighlightNodes] = React.useState(new Set());
-	// const [highlightLinks, setHighlightLinks] = React.useState(new Set());
-
-	// const updateHighlight = () => {
-	//     setHighlightNodes(highlightNodes);
-	//     setHighlightLinks(highlightLinks);
-	// };
-
-	// const handleLinkHover = (link: LinkObject | null) => {
-	//     highlightNodes.clear();
-	//     highlightLinks.clear();
-
-	//     if (link) {
-	//         highlightLinks.add(link);
-	//         highlightNodes.add(link.source);
-	//         highlightNodes.add(link.target);
-	//         // link.weight = 10;
-	//     }
-
-	//     updateHighlight();
-	// };
-
-	// onLinkHover={handleLinkHover}
-	// linkDirectionalParticleWidth={(link: LinkObject) => highlightLinks.has(link) ? 6 : 1.4}
-
-	// END OF TEST CODE
-
 	return (
-		<div>
+		<NetworkGraphContext.Provider
+			value={{ alertMessage, setAlertMessage, alertSeverity, setAlertSeverity }}
+		>
 			<Dialog onClose={handleDialogClose} open={open}>
-				<RecurserCard node={currNode} />
+				<RecurserCard node={focusedNode} />
 			</Dialog>
 			<ForceGraph2D
 				ref={fgRef}
 				graphData={graphData}
 				nodeLabel="name"
-				nodeAutoColorBy="batchName"
-				linkDirectionalParticles={2}
-				linkDirectionalParticleWidth={1.4}
+				nodeAutoColorBy="id"
 				onNodeClick={handleNodeClick}
 				onNodeRightClick={handleNodeRightClick}
 				onBackgroundClick={handleBackgroundClick}
 				onBackgroundRightClick={handleBackgroundRightClick}
+				linkDirectionalParticles={1.4}
+				linkDirectionalParticleWidth={2}
+				onLinkHover={link => console.log(link)}
 			/>
-		</div>
+		</NetworkGraphContext.Provider>
 	);
 };

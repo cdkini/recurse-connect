@@ -22,9 +22,10 @@ export interface RecurserNode extends NodeObject {
 }
 
 export interface RecurserEdge {
-	source: number;
-	target: number;
+	source: RecurserNode;
+	target: RecurserNode;
 	weight: number;
+	color: string | undefined;
 }
 
 export interface RecurserGraph {

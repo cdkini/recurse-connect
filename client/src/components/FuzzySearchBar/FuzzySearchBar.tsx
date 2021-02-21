@@ -14,9 +14,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { FormHelperText, TextField } from '@material-ui/core';
 import { FuzzySearchContext } from '../../contexts/FuzzySearchContext/FuzzySearchContext';
 import { FuzzySearchResults } from '../FuzzySearchResults/FuzzySearchResults';
-import { RecurserNode } from '../../types/RecurserGraph';
+import { RecurserNode, RecurserEdge } from '../../types/RecurserGraph';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { NetworkContext } from '../../contexts/NetworkContext/NetworkContext';
+// import { NetworkGraphContext } from '../../contexts/NetworkGraphContext/NetworkGraphContext';
+import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -69,7 +71,9 @@ interface Props {}
 
 export const FuzzySearchBar: React.FC<Props> = () => {
 	const classes = useStyles();
-	const { fgRef, currNode, graphData } = React.useContext(NetworkContext);
+	const { fgRef, userNode, graphData, setGraphData } = React.useContext(
+		NetworkContext,
+	);
 
 	const [openDialog, setOpenDialog] = React.useState<boolean>(false);
 	const [searchCriteria, setSearchCriteria] = React.useState<Array<string>>([]);
@@ -83,8 +87,13 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 	const [
 		recurserSearchValue,
 		setRecurserSearchValue,
-	] = React.useState<RecurserNode | null>(currNode);
+	] = React.useState<RecurserNode | null>(userNode);
 	const [recurserInputValue, setRecurserInputValue] = React.useState('');
+
+	const [alertMessage, setAlertMessage] = React.useState('');
+	const [alertSeverity, setAlertSeverity] = React.useState<
+		'error' | 'warning' | 'info' | 'success' | undefined
+	>(undefined);
 
 	const fuse = React.useMemo(() => {
 		return new Fuse(graphData.nodes, {
@@ -112,15 +121,143 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 		setSearchQuery(event.target.value);
 	};
 
+	const recurserNodeMap = graphData.nodes.reduce(function(map, obj) {
+		map.set(obj.id, obj);
+		return map;
+	}, new Map<string | number | undefined, RecurserNode>());
+
+	const recurserEdgeMap = graphData.links.reduce(function(map, obj) {
+		map.has(obj.source.id)
+			? map.get(obj.source.id)!.push(obj)
+			: map.set(obj.source.id, [obj]);
+		map.has(obj.target.id)
+			? map.get(obj.target.id)!.push(obj)
+			: map.set(obj.target.id, [obj]);
+		return map;
+	}, new Map<string | number | undefined, Array<RecurserEdge>>());
+
+	function sleep(ms: number) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	const prepareGraph = () => {
+		for (let i = 0; i < graphData.nodes.length; i++) {
+			if (graphData.nodes[i].profilePath) {
+				graphData.nodes[i].color = 'grey';
+			} else {
+				graphData.nodes[i].color = '#000000';
+			}
+		}
+		setGraphData(graphData);
+	};
+
+	function updateAlert(
+		status: 'error' | 'warning' | 'info' | 'success' | undefined,
+		message: string,
+	) {
+		setAlertSeverity(status);
+		setAlertMessage(message);
+	}
+
+	async function dfs(
+		start: string | number | undefined,
+		end: string | number | undefined,
+	) {
+		prepareGraph();
+		updateAlert;
+		updateAlert(
+			'success',
+			`Starting graph traversal at ${userNode.name} (${userNode.batchShortName})`,
+		);
+		await sleep(1000);
+		fgRef.current.centerAt(userNode.x, userNode.y, 100);
+		userNode.color = '#3dc06c';
+
+		let stack: Array<string | number | undefined> = [start];
+		let visited = new Set<string | number | undefined>();
+
+		while (stack.length > 0) {
+			let id = stack.pop();
+			let currNode = recurserNodeMap.get(id)!;
+			updateAlert(
+				'warning',
+				`Visiting ${currNode.name} (${currNode.batchShortName})`,
+			);
+
+			await sleep(100);
+
+			currNode.color = 'yellow';
+			fgRef.current.centerAt(currNode.x, currNode.y, 2000);
+
+			await sleep(100);
+
+			if (currNode.id === end) {
+				currNode.color = '#3dc06c';
+				updateAlert(
+					'success',
+					`Found ${currNode.name} (${currNode.batchShortName})`,
+				);
+				break;
+			}
+
+			if (currNode.id === userNode.id) {
+				currNode.color = '#3dc06c';
+			}
+
+			await sleep(100);
+
+			if (currNode.profilePath && currNode.id !== userNode.id) {
+				currNode.color = 'red';
+				updateAlert(
+					'error',
+					`Marking ${currNode.name} (${currNode.batchShortName}) as visited`,
+				);
+			} else if (!currNode.profilePath) {
+				currNode.color = 'black';
+			}
+			await sleep(100);
+
+			visited.add(currNode.id);
+
+			let paths = recurserEdgeMap.get(currNode.id)!;
+			for (let i = 0; i < paths.length; i++) {
+				if (!visited.has(paths[i]!.target.id)) {
+					stack.push(paths[i].target.id);
+					paths[i].target.color = 'blue';
+					paths[i].color = 'yellow';
+
+					updateAlert(
+						'info',
+						`Marking ${paths[i].target.name} (${paths[i].target.batchShortName}) for later`,
+					);
+					await sleep(100);
+					delete paths[i].color;
+					paths[i].target.color = 'grey';
+				}
+				if (!visited.has(paths[i]!.source.id)) {
+					stack.push(paths[i].source.id);
+					paths[i].color = 'yellow';
+					paths[i].source.color = 'blue';
+					updateAlert(
+						'info',
+						`Marking ${paths[i].source.name} (${paths[i].source.batchShortName}) for later`,
+					);
+					await sleep(100);
+					delete paths[i].color;
+					paths[i].source.color = 'grey';
+				}
+			}
+			setGraphData(graphData);
+		}
+
+		fgRef.current.zoom(5, 1000);
+	}
+
 	const handleRecurserSearchSubmit = (event: React.KeyboardEvent) => {
 		if (event.keyCode === 13 && recurserSearchValue) {
-			fgRef.current.centerAt(
-				recurserSearchValue.x,
-				recurserSearchValue.y,
-				2000,
-			);
-			fgRef.current.zoom(8, 2000);
+			dfs(userNode.id, recurserSearchValue.id);
 		}
+		console.log(graphData.links);
 	};
 
 	return (
@@ -134,6 +271,9 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 				setOpenDialog,
 			}}
 		>
+			<Alert variant="filled" severity={alertSeverity}>
+				{alertMessage}
+			</Alert>
 			<div className={classes.root}>
 				<FuzzySearchResults />
 				<AppBar className={classes.appBar} position="static">

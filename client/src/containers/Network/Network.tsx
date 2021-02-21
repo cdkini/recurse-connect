@@ -23,7 +23,7 @@ export const Network: React.FC<Props> = (props: Props) => {
 			});
 	}, []);
 
-	const [currNode, setCurrNode] = React.useState<RecurserNode>(
+	const [userNode, setUserNode] = React.useState<RecurserNode>(
 		{} as RecurserNode,
 	);
 
@@ -31,7 +31,7 @@ export const Network: React.FC<Props> = (props: Props) => {
 		fetch('/api/v1/users/' + props.profileId.toString())
 			.then(res => res.json())
 			.then(data => {
-				setCurrNode(data);
+				setUserNode(data);
 			});
 	}, []);
 
@@ -40,7 +40,7 @@ export const Network: React.FC<Props> = (props: Props) => {
 
 	return (
 		<NetworkContext.Provider
-			value={{ fgRef, graphData, setGraphData, currNode, setCurrNode }}
+			value={{ fgRef, graphData, setGraphData, userNode, setUserNode }}
 		>
 			<NavigationBar />
 			<NetworkGraph />
