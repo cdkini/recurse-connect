@@ -1,15 +1,14 @@
 import * as React from 'react';
 import ForceGraph2D, { NodeObject } from 'react-force-graph-2d';
 import { RecurserNode } from '../../types/RecurserGraph';
-import { Dialog } from '@material-ui/core';
-import { RecurserCard } from '../RecurserCard/RecurserCard';
 import { NetworkContext } from '../../contexts/NetworkContext/NetworkContext';
 import { NetworkGraphContext } from '../../contexts/NetworkGraphContext/NetworkGraphContext';
+import { RecurserCardDialog } from '../RecurserCardDialog/RecurserCardDialog';
 
 interface Props {}
 
 export const NetworkGraph: React.FC<Props> = () => {
-	const [open, setOpen] = React.useState(false);
+	const [openDialog, setOpenDialog] = React.useState(false);
 	const { fgRef, graphData, userNode } = React.useContext(NetworkContext);
 	const [focusedNode, setFocusedNode] = React.useState(userNode);
 	const [alertMessage, setAlertMessage] = React.useState('');
@@ -18,10 +17,10 @@ export const NetworkGraph: React.FC<Props> = () => {
 	>(undefined);
 
 	const handleDialogOpen = () => {
-		setOpen(true);
+		setOpenDialog(true);
 	};
 	const handleDialogClose = () => {
-		setOpen(false);
+		setOpenDialog(false);
 	};
 
 	const handleNodeClick = (node: NodeObject) => {
@@ -46,11 +45,17 @@ export const NetworkGraph: React.FC<Props> = () => {
 
 	return (
 		<NetworkGraphContext.Provider
-			value={{ alertMessage, setAlertMessage, alertSeverity, setAlertSeverity }}
+			value={{
+				alertMessage,
+				setAlertMessage,
+				alertSeverity,
+				setAlertSeverity,
+				focusedNode,
+				openDialog,
+				handleDialogClose,
+			}}
 		>
-			<Dialog onClose={handleDialogClose} open={open}>
-				<RecurserCard node={focusedNode} />
-			</Dialog>
+			<RecurserCardDialog />
 			<ForceGraph2D
 				ref={fgRef}
 				graphData={graphData}
@@ -62,7 +67,6 @@ export const NetworkGraph: React.FC<Props> = () => {
 				onBackgroundRightClick={handleBackgroundRightClick}
 				linkDirectionalParticles={1.4}
 				linkDirectionalParticleWidth={2}
-				onLinkHover={link => console.log(link)}
 			/>
 		</NetworkGraphContext.Provider>
 	);
