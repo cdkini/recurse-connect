@@ -35,16 +35,11 @@ const App: React.FC = () => {
 		<div>
 			<Switch>
 				<Route path={['/', '/home']} exact component={Home} />
-				<ProtectedRoute
-					{...defaultProtectedRouteProps}
-					path="/stats"
-					exact
-					component={Stats}
-				/>
+				<Route path="/stats" exact component={Stats} />
 				<Route
 					path="/network"
 					exact
-					render={props => <Network {...props} profileId={4172} />}
+					render={props => <Network {...props} profileId={3721} />}
 				/>
 				<ProtectedRoute
 					{...defaultProtectedRouteProps}
