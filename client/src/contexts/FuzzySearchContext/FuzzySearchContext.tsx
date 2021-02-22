@@ -21,6 +21,8 @@ interface FuzzySearchProps {
 	recurserInputValue: string;
 	setRecurserInputValue: React.Dispatch<React.SetStateAction<string>>;
 	pathfinder: Pathfinder;
+	openAlert: boolean;
+	setOpenAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const FuzzySearchContext = createContext<FuzzySearchProps>(

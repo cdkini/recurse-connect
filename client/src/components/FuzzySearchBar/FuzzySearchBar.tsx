@@ -1,8 +1,6 @@
 import * as React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Fuse from 'fuse.js';
-import IconButton from '@material-ui/core/IconButton';
-import SettingsIcon from '@material-ui/icons/Settings';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Alert } from '@material-ui/lab';
 import { FuzzySearchContext } from '../../contexts/FuzzySearchContext/FuzzySearchContext';
@@ -13,6 +11,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Alerter, Pathfinder } from '../../utils/graphUtils';
 import { RecurserSearch } from '../RecurserSearch/RecurserSearch';
 import { CriteriaSearch } from '../CriteriaSearch/CriteriaSearch';
+import { PathfindingSettings } from '../PathfindingSettings/PathfindingSettings';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -60,7 +59,8 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 		setRecurserSearchValue,
 	] = React.useState<RecurserNode | null>(userNode);
 	const [recurserInputValue, setRecurserInputValue] = React.useState('');
-	const [alertMessage, setAlertMessage] = React.useState('');
+	const [openAlert, setOpenAlert] = React.useState<boolean>(false);
+	const [alertMessage, setAlertMessage] = React.useState<string>('');
 	const [alertSeverity, setAlertSeverity] = React.useState<
 		'error' | 'warning' | 'info' | 'success' | undefined
 	>(undefined);
@@ -88,24 +88,29 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 				recurserInputValue,
 				setRecurserInputValue,
 				pathfinder,
+				openAlert,
+				setOpenAlert,
 			}}
 		>
-			<Alert
-				className={classes.alert}
-				variant="filled"
-				severity={alertSeverity}
-			>
-				{alertMessage}
-			</Alert>
+			{openAlert && (
+				<Alert
+					onClose={() => {
+						setOpenAlert(false);
+					}}
+					className={classes.alert}
+					variant="filled"
+					severity={alertSeverity}
+				>
+					{alertMessage}
+				</Alert>
+			)}
 			<div className={classes.root}>
 				<FuzzySearchResults />
 				<AppBar className={classes.appBar} position="static">
 					<Toolbar>
 						<CriteriaSearch />
 						<RecurserSearch />
-						<IconButton>
-							<SettingsIcon fontSize="large" style={{ color: '#000000' }} />
-						</IconButton>
+						<PathfindingSettings />
 					</Toolbar>
 				</AppBar>
 			</div>

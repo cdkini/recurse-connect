@@ -30,6 +30,12 @@ export class Alerter {
 	}
 }
 
+export interface AlgoArgs {
+	sourceId: string | number | undefined;
+	targetId: string | number | undefined;
+	animationSpeed: number;
+}
+
 export class Pathfinder {
 	fgRef: any;
 	userNode: RecurserNode;
@@ -100,10 +106,7 @@ export class Pathfinder {
 		return node.name;
 	}
 
-	async depthFirstSearch(
-		sourceId: string | number | undefined,
-		targetId: string | number | undefined,
-	) {
+	public async dfs(args: AlgoArgs) {
 		this.prepareGraph();
 		this.alerter.updateAlert(
 			'success',
@@ -114,7 +117,7 @@ export class Pathfinder {
 		this.fgRef.current.centerAt(this.userNode.x, this.userNode.y, 100);
 		this.userNode.color = '#3dc06c';
 
-		let stack: Array<string | number | undefined> = [sourceId];
+		let stack: Array<string | number | undefined> = [args.sourceId];
 		let visited = new Set<string | number | undefined>();
 
 		while (stack.length > 0) {
@@ -125,14 +128,14 @@ export class Pathfinder {
 				`Visiting ${this.stringifyNode(currNode)}`,
 			);
 
-			await this.sleep(100);
+			await this.sleep(args.animationSpeed);
 
 			currNode.color = 'yellow';
 			this.fgRef.current.centerAt(currNode.x, currNode.y, 2000);
 
-			await this.sleep(100);
+			await this.sleep(args.animationSpeed);
 
-			if (currNode.id === targetId) {
+			if (currNode.id === args.targetId) {
 				currNode.color = '#3dc06c';
 				let end = new Date().getTime();
 				this.alerter.updateAlert(
@@ -149,7 +152,7 @@ export class Pathfinder {
 				currNode.color = '#3dc06c';
 			}
 
-			await this.sleep(100);
+			await this.sleep(args.animationSpeed);
 
 			if (currNode.profilePath && currNode.id !== this.userNode.id) {
 				currNode.color = 'red';
@@ -160,7 +163,7 @@ export class Pathfinder {
 			} else if (!currNode.profilePath) {
 				currNode.color = 'black';
 			}
-			await this.sleep(100);
+			await this.sleep(args.animationSpeed);
 
 			visited.add(currNode.id);
 
@@ -169,31 +172,46 @@ export class Pathfinder {
 				if (!visited.has(paths[i]!.target.id)) {
 					stack.push(paths[i].target.id);
 					paths[i].target.color = 'blue';
-					paths[i].color = 'yellow';
+					paths[i].color = 'black';
 					this.alerter.updateAlert(
 						'info',
 						`Marking ${this.stringifyNode(paths[i].target)} for later`,
 					);
-					await this.sleep(100);
+					await this.sleep(args.animationSpeed);
 					delete paths[i].color;
 					paths[i].target.color = 'grey';
 				}
 				if (!visited.has(paths[i]!.source.id)) {
 					stack.push(paths[i].source.id);
 					paths[i].source.color = 'blue';
-					paths[i].color = 'yellow';
+					paths[i].color = 'black';
 					this.alerter.updateAlert(
 						'info',
 						`Marking ${this.stringifyNode(paths[i].source)} for later`,
 					);
-					await this.sleep(100);
+					await this.sleep(args.animationSpeed);
 					delete paths[i].color;
 					paths[i].source.color = 'grey';
 				}
 			}
 			this.setGraphData(this.graphData);
 		}
-
 		this.fgRef.current.zoom(5, 1000);
+	}
+
+	public async bfs(args: AlgoArgs) {
+		console.log(args);
+	}
+
+	public async djikstras(args: AlgoArgs) {
+		console.log(args);
+	}
+
+	public async astar(args: AlgoArgs) {
+		console.log(args);
+	}
+
+	public async bellmanFord(args: AlgoArgs) {
+		console.log(args);
 	}
 }

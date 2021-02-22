@@ -15,11 +15,17 @@ export const RecurserSearch: React.FC<Props> = () => {
 		recurserInputValue,
 		setRecurserInputValue,
 		pathfinder,
+		setOpenAlert,
 	} = React.useContext(FuzzySearchContext);
 
 	const handleRecurserSearchSubmit = (event: React.KeyboardEvent) => {
 		if (event.keyCode === 13 && recurserSearchValue) {
-			pathfinder.depthFirstSearch(userNode.id, recurserSearchValue.id);
+			setOpenAlert(true);
+			pathfinder.dfs({
+				sourceId: userNode.id,
+				targetId: recurserSearchValue.id,
+				animationSpeed: 100,
+			});
 		}
 	};
 
