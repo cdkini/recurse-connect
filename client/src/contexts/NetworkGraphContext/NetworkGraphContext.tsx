@@ -4,6 +4,7 @@ import { RecurserNode } from '../../types/RecurserGraph';
 interface ContextProps {
 	focusedNode: RecurserNode;
 	openDialog: boolean;
+	handleDialogOpen: () => void;
 	handleDialogClose: () => void;
 }
 

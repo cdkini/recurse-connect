@@ -5,6 +5,31 @@ import {
 	RecurserGraph,
 } from '../types/RecurserGraph';
 
+export class Alerter {
+	setAlertSeverity: Dispatch<
+		SetStateAction<'error' | 'warning' | 'info' | 'success' | undefined>
+	>;
+	setAlertMessage: Dispatch<SetStateAction<string>>;
+
+	constructor(
+		setAlertSeverity: Dispatch<
+			SetStateAction<'error' | 'warning' | 'info' | 'success' | undefined>
+		>,
+		setAlertMessage: Dispatch<SetStateAction<string>>,
+	) {
+		this.setAlertSeverity = setAlertSeverity;
+		this.setAlertMessage = setAlertMessage;
+	}
+
+	updateAlert(
+		status: 'error' | 'warning' | 'info' | 'success' | undefined,
+		message: string,
+	) {
+		this.setAlertSeverity(status);
+		this.setAlertMessage(message);
+	}
+}
+
 export class Pathfinder {
 	fgRef: any;
 	userNode: RecurserNode;
@@ -12,20 +37,14 @@ export class Pathfinder {
 	setGraphData: Dispatch<SetStateAction<RecurserGraph>>;
 	recurserNodeMap: Map<string | number | undefined, RecurserNode>;
 	recurserEdgeMap: Map<string | number | undefined, Array<RecurserEdge>>;
-	setAlertSeverity: Dispatch<
-		SetStateAction<'error' | 'warning' | 'info' | 'success' | undefined>
-	>;
-	setAlertMessage: Dispatch<SetStateAction<string>>;
+	alerter: Alerter;
 
 	constructor(
 		fgRef: any,
 		userNode: RecurserNode,
 		graphData: RecurserGraph,
 		setGraphData: Dispatch<SetStateAction<RecurserGraph>>,
-		setAlertSeverity: Dispatch<
-			SetStateAction<'error' | 'warning' | 'info' | 'success' | undefined>
-		>,
-		setAlertMessage: Dispatch<SetStateAction<string>>,
+		alerter: Alerter,
 	) {
 		this.fgRef = fgRef;
 		this.userNode = userNode;
@@ -33,8 +52,7 @@ export class Pathfinder {
 		this.setGraphData = setGraphData;
 		this.recurserNodeMap = this.getRecurserNodeMap(this.graphData.nodes);
 		this.recurserEdgeMap = this.getRecurserEdgeMap(this.graphData.links);
-		this.setAlertSeverity = setAlertSeverity;
-		this.setAlertMessage = setAlertMessage;
+		this.alerter = alerter;
 	}
 
 	private getRecurserNodeMap(
@@ -64,14 +82,6 @@ export class Pathfinder {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
-	private updateAlert(
-		status: 'error' | 'warning' | 'info' | 'success' | undefined,
-		message: string,
-	) {
-		this.setAlertSeverity(status);
-		this.setAlertMessage(message);
-	}
-
 	private prepareGraph() {
 		for (let i = 0; i < this.graphData.nodes.length; i++) {
 			if (this.graphData.nodes[i].profilePath) {
@@ -83,29 +93,36 @@ export class Pathfinder {
 		this.setGraphData(this.graphData);
 	}
 
+	private stringifyNode(node: RecurserNode): string | undefined {
+		if (node.profilePath) {
+			return `${node.name} (${node.batchShortName})`;
+		}
+		return node.name;
+	}
+
 	async depthFirstSearch(
-		start: string | number | undefined,
-		end: string | number | undefined,
+		sourceId: string | number | undefined,
+		targetId: string | number | undefined,
 	) {
 		this.prepareGraph();
-		this.updateAlert;
-		this.updateAlert(
+		this.alerter.updateAlert(
 			'success',
-			`Starting graph traversal at ${this.userNode.name} (${this.userNode.batchShortName})`,
+			`Starting DFS in a graph containing ${this.graphData.nodes.length} vertices and ${this.graphData.links.length} edges!`,
 		);
-		await this.sleep(1000);
+		await this.sleep(2000);
+		let start = new Date().getTime();
 		this.fgRef.current.centerAt(this.userNode.x, this.userNode.y, 100);
 		this.userNode.color = '#3dc06c';
 
-		let stack: Array<string | number | undefined> = [start];
+		let stack: Array<string | number | undefined> = [sourceId];
 		let visited = new Set<string | number | undefined>();
 
 		while (stack.length > 0) {
 			let id = stack.pop();
 			let currNode = this.recurserNodeMap.get(id)!;
-			this.updateAlert(
+			this.alerter.updateAlert(
 				'warning',
-				`Visiting ${currNode.name} (${currNode.batchShortName})`,
+				`Visiting ${this.stringifyNode(currNode)}`,
 			);
 
 			await this.sleep(100);
@@ -115,11 +132,15 @@ export class Pathfinder {
 
 			await this.sleep(100);
 
-			if (currNode.id === end) {
+			if (currNode.id === targetId) {
 				currNode.color = '#3dc06c';
-				this.updateAlert(
+				let end = new Date().getTime();
+				this.alerter.updateAlert(
 					'success',
-					`Found ${currNode.name} (${currNode.batchShortName})`,
+					`Found ${this.stringifyNode(currNode)} in ${(end - start) /
+						1000}'s after visiting ${visited.size}/${
+						this.graphData.nodes.length
+					} nodes. Note that this not necessarily the shortest path; DFS only guarantees a valid path!`,
 				);
 				break;
 			}
@@ -132,9 +153,9 @@ export class Pathfinder {
 
 			if (currNode.profilePath && currNode.id !== this.userNode.id) {
 				currNode.color = 'red';
-				this.updateAlert(
+				this.alerter.updateAlert(
 					'error',
-					`Marking ${currNode.name} (${currNode.batchShortName}) as visited`,
+					`Marking ${this.stringifyNode(currNode)} as visited`,
 				);
 			} else if (!currNode.profilePath) {
 				currNode.color = 'black';
@@ -149,10 +170,9 @@ export class Pathfinder {
 					stack.push(paths[i].target.id);
 					paths[i].target.color = 'blue';
 					paths[i].color = 'yellow';
-
-					this.updateAlert(
+					this.alerter.updateAlert(
 						'info',
-						`Marking ${paths[i].target.name} (${paths[i].target.batchShortName}) for later`,
+						`Marking ${this.stringifyNode(paths[i].target)} for later`,
 					);
 					await this.sleep(100);
 					delete paths[i].color;
@@ -160,11 +180,11 @@ export class Pathfinder {
 				}
 				if (!visited.has(paths[i]!.source.id)) {
 					stack.push(paths[i].source.id);
-					paths[i].color = 'yellow';
 					paths[i].source.color = 'blue';
-					this.updateAlert(
+					paths[i].color = 'yellow';
+					this.alerter.updateAlert(
 						'info',
-						`Marking ${paths[i].source.name} (${paths[i].source.batchShortName}) for later`,
+						`Marking ${this.stringifyNode(paths[i].source)} for later`,
 					);
 					await this.sleep(100);
 					delete paths[i].color;

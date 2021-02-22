@@ -44,6 +44,7 @@ export const NetworkGraph: React.FC<Props> = () => {
 			value={{
 				focusedNode,
 				openDialog,
+				handleDialogOpen,
 				handleDialogClose,
 			}}
 		>
