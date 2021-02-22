@@ -12,6 +12,8 @@ import { Button } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { RecurserNode } from '../../types/RecurserGraph';
 import { SocialMediaIcon } from '../SocialMediaIcon/SocialMediaIcon';
+import { TagIcon } from '../TagIcon/TagIcon';
+import { NoteIcon } from '../NoteIcon/NoteIcon';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -79,6 +81,12 @@ export const RecurserCard: React.FC<Props> = (props: Props) => {
 					props.node.company
 						? `${props.node.location} | @${props.node.company}`
 						: props.node.location
+				}
+				action={
+					<div>
+						<TagIcon />
+						<NoteIcon currNode={props.node} />
+					</div>
 				}
 			/>
 			<CardContent>
