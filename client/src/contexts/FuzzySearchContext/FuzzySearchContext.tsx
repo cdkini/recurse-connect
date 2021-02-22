@@ -1,6 +1,7 @@
 import Fuse from 'fuse.js';
 import { RecurserNode } from '../../types/RecurserGraph';
 import { createContext } from 'react';
+import { Pathfinder } from '../../utils/graphUtils';
 
 interface FuzzySearchProps {
 	searchResults: Array<Fuse.FuseResult<RecurserNode>>;
@@ -13,6 +14,13 @@ interface FuzzySearchProps {
 	>;
 	openDialog: boolean;
 	setOpenDialog: React.Dispatch<boolean>;
+	recurserSearchValue: RecurserNode | null;
+	setRecurserSearchValue: React.Dispatch<
+		React.SetStateAction<RecurserNode | null>
+	>;
+	recurserInputValue: string;
+	setRecurserInputValue: React.Dispatch<React.SetStateAction<string>>;
+	pathfinder: Pathfinder;
 }
 
 export const FuzzySearchContext = createContext<FuzzySearchProps>(

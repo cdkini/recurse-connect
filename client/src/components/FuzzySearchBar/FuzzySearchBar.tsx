@@ -1,6 +1,5 @@
 import * as React from 'react';
 import AppBar from '@material-ui/core/AppBar';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControl from '@material-ui/core/FormControl';
 import Fuse from 'fuse.js';
@@ -19,7 +18,8 @@ import { FuzzySearchResults } from '../FuzzySearchResults/FuzzySearchResults';
 import { NetworkContext } from '../../contexts/NetworkContext/NetworkContext';
 import { RecurserNode } from '../../types/RecurserGraph';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Pathfinder } from '../../utils/graphUtils';
+import { Alerter, Pathfinder } from '../../utils/graphUtils';
+import { RecurserSearch } from '../RecurserSearch/RecurserSearch';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		extendedIcon: {
 			marginRight: theme.spacing(1),
 		},
+		alert: {},
 	}),
 );
 
@@ -90,7 +91,6 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 		setRecurserSearchValue,
 	] = React.useState<RecurserNode | null>(userNode);
 	const [recurserInputValue, setRecurserInputValue] = React.useState('');
-
 	const [alertMessage, setAlertMessage] = React.useState('');
 	const [alertSeverity, setAlertSeverity] = React.useState<
 		'error' | 'warning' | 'info' | 'success' | undefined
@@ -122,20 +122,14 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 		setSearchQuery(event.target.value);
 	};
 
+	const alerter = new Alerter(setAlertSeverity, setAlertMessage);
 	const pathfinder = new Pathfinder(
 		fgRef,
 		userNode,
 		graphData,
 		setGraphData,
-		setAlertSeverity,
-		setAlertMessage,
+		alerter,
 	);
-
-	const handleRecurserSearchSubmit = (event: React.KeyboardEvent) => {
-		if (event.keyCode === 13 && recurserSearchValue) {
-			pathfinder.depthFirstSearch(userNode.id, recurserSearchValue.id);
-		}
-	};
 
 	return (
 		<FuzzySearchContext.Provider
@@ -146,9 +140,18 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 				setSelectedResults,
 				openDialog,
 				setOpenDialog,
+				recurserSearchValue,
+				setRecurserSearchValue,
+				recurserInputValue,
+				setRecurserInputValue,
+				pathfinder,
 			}}
 		>
-			<Alert variant="filled" severity={alertSeverity}>
+			<Alert
+				className={classes.alert}
+				variant="filled"
+				severity={alertSeverity}
+			>
 				{alertMessage}
 			</Alert>
 			<div className={classes.root}>
@@ -193,30 +196,7 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 								</FormHelperText>
 							</FormControl>
 						</IconButton>
-						<Autocomplete
-							value={recurserSearchValue}
-							onChange={(_event: any, newValue: RecurserNode | null) => {
-								setRecurserSearchValue(newValue);
-							}}
-							inputValue={recurserInputValue}
-							onInputChange={(_event, newInputValue) => {
-								setRecurserInputValue(newInputValue);
-							}}
-							id="controllable-states-demo"
-							options={graphData.nodes}
-							getOptionLabel={option =>
-								`${option.name} (${option.batchShortName})`
-							}
-							style={{ width: 300 }}
-							renderInput={params => (
-								<TextField
-									{...params}
-									label="Search by Recurser name"
-									variant="outlined"
-								/>
-							)}
-							onKeyDown={handleRecurserSearchSubmit}
-						/>
+						<RecurserSearch />
 						<IconButton>
 							<SettingsIcon fontSize="large" style={{ color: '#000000' }} />
 						</IconButton>

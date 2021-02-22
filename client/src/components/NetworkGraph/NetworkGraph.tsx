@@ -11,10 +11,6 @@ export const NetworkGraph: React.FC<Props> = () => {
 	const [openDialog, setOpenDialog] = React.useState(false);
 	const { fgRef, graphData, userNode } = React.useContext(NetworkContext);
 	const [focusedNode, setFocusedNode] = React.useState(userNode);
-	const [alertMessage, setAlertMessage] = React.useState('');
-	const [alertSeverity, setAlertSeverity] = React.useState<
-		'error' | 'warning' | 'info' | 'success' | undefined
-	>(undefined);
 
 	const handleDialogOpen = () => {
 		setOpenDialog(true);
@@ -46,10 +42,6 @@ export const NetworkGraph: React.FC<Props> = () => {
 	return (
 		<NetworkGraphContext.Provider
 			value={{
-				alertMessage,
-				setAlertMessage,
-				alertSeverity,
-				setAlertSeverity,
 				focusedNode,
 				openDialog,
 				handleDialogClose,
