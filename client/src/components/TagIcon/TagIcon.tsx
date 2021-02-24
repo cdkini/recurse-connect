@@ -10,17 +10,54 @@ import {
 	Button,
 	DialogActions,
 } from '@material-ui/core';
+import { NetworkContext } from '../../contexts/NetworkContext/NetworkContext';
+import { RecurserNode } from '../../types/RecurserGraph';
 
-interface Props {}
+interface Props {
+	currNode: RecurserNode;
+}
 
-export const TagIcon: React.FC<Props> = () => {
+export const TagIcon: React.FC<Props> = (props: Props) => {
+	const { profileId } = React.useContext(NetworkContext);
 	const [open, setOpen] = React.useState(false);
+	const [tags, setTags] = React.useState('');
 
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
 
 	const handleClose = () => {
+		setOpen(false);
+	};
+
+	const handleTagsChange = (event: React.ChangeEvent<{ value: string }>) => {
+		setTags(event.target.value);
+	};
+
+	const handleSubmitClick = () => {
+		let items = [];
+		let arr = tags.split(', ').map(t => t.trim());
+		for (let i = 0; i < arr.length; i++) {
+			items.push({
+				author: profileId,
+				participants: [props.currNode.id],
+				name: arr[i],
+			});
+		}
+
+		let body = {
+			tags: items,
+		};
+
+		fetch('/api/v1/tags', {
+			method: 'POST', // or 'PUT'
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			mode: 'no-cors',
+			body: JSON.stringify(body),
+		});
+
 		setOpen(false);
 	};
 
@@ -49,13 +86,14 @@ export const TagIcon: React.FC<Props> = () => {
 						label="Please write Recurser tags below (separate by commas if multiple)"
 						type="email"
 						fullWidth
+						onChange={handleTagsChange}
 					/>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleClose} color="primary">
 						Cancel
 					</Button>
-					<Button onClick={handleClose} color="primary">
+					<Button onClick={handleSubmitClick} color="primary">
 						Submit
 					</Button>
 				</DialogActions>

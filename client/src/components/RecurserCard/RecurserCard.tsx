@@ -84,7 +84,7 @@ export const RecurserCard: React.FC<Props> = (props: Props) => {
 				}
 				action={
 					<div>
-						<TagIcon />
+						<TagIcon currNode={props.node} />
 						<NoteIcon currNode={props.node} />
 					</div>
 				}

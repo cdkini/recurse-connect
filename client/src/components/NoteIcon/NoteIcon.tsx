@@ -23,7 +23,7 @@ interface Props {
 }
 
 export const NoteIcon: React.FC<Props> = (props: Props) => {
-	const { userNode, graphData } = React.useContext(NetworkContext);
+	const { profileId, graphData } = React.useContext(NetworkContext);
 
 	const [openDialog, setOpenDialog] = React.useState<boolean>(false);
 	const [title, setTitle] = React.useState<string>('');
@@ -31,7 +31,6 @@ export const NoteIcon: React.FC<Props> = (props: Props) => {
 		new Date(),
 	);
 	const [recursers, setRecursers] = React.useState<Array<RecurserNode>>([
-		userNode,
 		props.currNode,
 	]);
 	const [tags, setTags] = React.useState<string>('');
@@ -59,6 +58,27 @@ export const NoteIcon: React.FC<Props> = (props: Props) => {
 
 	const handleContentChange = (event: React.ChangeEvent<{ value: string }>) => {
 		setContent(event.target.value);
+	};
+
+	const handleSubmitClick = () => {
+		let body = {
+			author: profileId,
+			title: title,
+			date: selectedDate,
+			participants: recursers.map(r => r.id),
+			tags: tags.split(', ').map(t => t.trim()),
+			content: content,
+		};
+		fetch('http://localhost:5000/api/v1/notes', {
+			method: 'POST', // or 'PUT'
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			mode: 'no-cors',
+			body: JSON.stringify(body),
+		});
+
+		setOpenDialog(false);
 	};
 
 	return (
@@ -132,7 +152,7 @@ export const NoteIcon: React.FC<Props> = (props: Props) => {
 					<Button onClick={handleDialogClose} color="primary">
 						Cancel
 					</Button>
-					<Button onClick={handleDialogClose} color="primary">
+					<Button onClick={handleSubmitClick} color="primary">
 						Submit
 					</Button>
 				</DialogActions>
