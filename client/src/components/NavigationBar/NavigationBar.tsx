@@ -16,6 +16,8 @@ import People from '@material-ui/icons/People';
 import Person from '@material-ui/icons/Person';
 import Settings from '@material-ui/icons/Settings';
 import InsertChart from '@material-ui/icons/InsertChart';
+import LabelIcon from '@material-ui/icons/Label';
+import CreateIcon from '@material-ui/icons/Create';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
@@ -81,10 +83,7 @@ const useStyles = makeStyles(theme => ({
 		marginLeft: 0,
 	},
 	bottomPush: {
-		position: 'fixed',
-		bottom: 0,
-		textAlign: 'center',
-		paddingBottom: 10,
+		marginTop: 'auto',
 	},
 }));
 
@@ -162,14 +161,20 @@ export const NavigationBar: React.FC<Props> = () => {
 				</List>
 				<div className={classes.bottomPush}>
 					<List>
-						{['Login', 'Settings'].map((text, index) => (
+						{['Notes', 'Tags', 'Login', 'Settings'].map((text, index) => (
 							<ListItem
 								button
 								key={text}
 								component={Link}
 								to={text.toLowerCase()}
 							>
-								<ListItemIcon>{[<Person />, <Settings />][index]}</ListItemIcon>
+								<ListItemIcon>
+									{
+										[<CreateIcon />, <LabelIcon />, <Person />, <Settings />][
+											index
+										]
+									}
+								</ListItemIcon>
 								<ListItemText primary={text} />
 							</ListItem>
 						))}
