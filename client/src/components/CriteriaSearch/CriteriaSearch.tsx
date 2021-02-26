@@ -51,7 +51,7 @@ const MenuProps = {
 };
 
 const criteria = [
-	'name',
+	'tag',
 	'location',
 	'company',
 	'interests',
@@ -72,7 +72,9 @@ export const CriteriaSearch: React.FC<Props> = () => {
 		setOpenDialog,
 	} = React.useContext(FuzzySearchContext);
 
-	const [searchCriteria, setSearchCriteria] = React.useState<Array<string>>([]);
+	const [searchCriteria, setSearchCriteria] = React.useState<Array<string>>(
+		criteria,
+	);
 	const [searchQuery, setSearchQuery] = React.useState<string>('');
 
 	const fuse = React.useMemo(() => {
@@ -109,7 +111,9 @@ export const CriteriaSearch: React.FC<Props> = () => {
 			aria-label="menu"
 		>
 			<FormControl className={classes.formControl}>
-				<InputLabel>Criteria</InputLabel>
+				<InputLabel>
+					<strong>Search by criteria</strong>
+				</InputLabel>
 				<Select
 					multiple
 					value={searchCriteria}

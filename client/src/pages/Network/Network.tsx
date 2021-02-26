@@ -37,10 +37,18 @@ export const Network: React.FC<Props> = (props: Props) => {
 
 	const { useRef } = React;
 	const fgRef = useRef() as any;
+	const profileId = props.profileId;
 
 	return (
 		<NetworkContext.Provider
-			value={{ fgRef, graphData, setGraphData, userNode, setUserNode }}
+			value={{
+				profileId,
+				fgRef,
+				graphData,
+				setGraphData,
+				userNode,
+				setUserNode,
+			}}
 		>
 			<NavigationBar />
 			<NetworkGraph />

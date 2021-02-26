@@ -16,11 +16,26 @@ import {
 	MenuItem,
 } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
+// import {AlgoArgs} from '../../utils/graphUtils';
+// import { FuzzySearchContext } from '../../contexts/FuzzySearchContext/FuzzySearchContext';
 
 interface Props {}
 
 export const PathfindingSettings: React.FC<Props> = () => {
+	// const {pathfinder} = React.useContext(FuzzySearchContext);
+
 	const [openDialog, setOpenDialog] = React.useState(false);
+	const [age, setAge] = React.useState<number>(30);
+	const [openSelect, setOpenSelect] = React.useState(false);
+	const [animationSwitchChecked, setAnimationSwitchChecked] = React.useState(
+		true,
+	);
+	const [nodeColorSwitchChecked, setNodeColorSwitchChecked] = React.useState(
+		false,
+	);
+	const [animationSpeed, setAnimationSpeed] = React.useState<number | number[]>(
+		100,
+	);
 
 	const handleDialogOpen = () => {
 		setOpenDialog(true);
@@ -29,19 +44,28 @@ export const PathfindingSettings: React.FC<Props> = () => {
 		setOpenDialog(false);
 	};
 
-	const [age, setAge] = React.useState<string | number>('');
-	const [open, setOpen] = React.useState(false);
-
-	const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+	const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
 		setAge(event.target.value as number);
 	};
 
-	const handleClose = () => {
-		setOpen(false);
+	const handleSelectClose = () => {
+		setOpenSelect(false);
 	};
 
-	const handleOpen = () => {
-		setOpen(true);
+	const handleSelectOpen = () => {
+		setOpenSelect(true);
+	};
+
+	const handleAnimationsSwitchClick = () => {
+		setAnimationSwitchChecked(!animationSwitchChecked);
+	};
+
+	const handleNodeColorSwitchClick = () => {
+		setNodeColorSwitchChecked(!nodeColorSwitchChecked);
+	};
+
+	const handleSliderChange = (_event: any, newValue: number | number[]) => {
+		setAnimationSpeed(newValue);
 	};
 
 	return (
@@ -60,44 +84,66 @@ export const PathfindingSettings: React.FC<Props> = () => {
 				<DialogContent>
 					<List component="nav" aria-label="mailbox folders">
 						<ListItem divider>
-							<ListItemText primary="Enable animations" />
-							<Switch checked={true} />
+							<ListItemText
+								primary="Enable animations"
+								secondary="Toggle node/edge highlighting and dynamic camera movement"
+							/>
+							<Switch
+								checked={animationSwitchChecked}
+								onClick={handleAnimationsSwitchClick}
+							/>
 						</ListItem>
 						<ListItem divider>
-							<ListItemText primary="Algorithm" />
+							<ListItemText
+								primary="Enable status bar"
+								secondary="Toggle updates about pathfinding state (marks, visits, etc)"
+							/>
+							<Switch
+								checked={animationSwitchChecked}
+								onClick={handleAnimationsSwitchClick}
+							/>
+						</ListItem>
+						<ListItem divider>
+							<ListItemText
+								primary="Enable color grouping"
+								secondary="Toggle between unique or shared color between batchmates"
+							/>
+							<Switch
+								checked={nodeColorSwitchChecked}
+								onClick={handleNodeColorSwitchClick}
+							/>
+						</ListItem>
+						<ListItem divider>
+							<ListItemText
+								primary="Pathfinder"
+								secondary="Determines algorithm and treatment of graph edges"
+							/>
 							<Select
-								open={open}
-								onClose={handleClose}
-								onOpen={handleOpen}
+								open={openSelect}
+								onClose={handleSelectClose}
+								onOpen={handleSelectOpen}
 								value={age}
-								onChange={handleChange}
+								onChange={handleSelectChange}
 							>
-								<MenuItem value={10}>
-									DFS (<i>unweighted</i>)
-								</MenuItem>
-								<MenuItem value={20}>
-									BFS (<i>unweighted</i>)
-								</MenuItem>
-								<MenuItem value={30}>
-									Djikstra's (<i>weighted</i>)
-								</MenuItem>
-								<MenuItem value={40}>
-									A* Search (<i>weighted</i>)
-								</MenuItem>
-								<MenuItem value={50}>
-									Bellman-Ford (<i>weighted</i>)
-								</MenuItem>
+								<MenuItem value={10}>DFS (unweighted)</MenuItem>
+								<MenuItem value={20}>BFS (unweighted)</MenuItem>
+								<MenuItem value={30}>Djikstra's (weighted)</MenuItem>
+								<MenuItem value={40}>A* Search (weighted)</MenuItem>
 							</Select>
 						</ListItem>
 						<ListItem divider>
-							<ListItemText primary="Animation speed" />
+							<ListItemText
+								primary="Animation speed"
+								secondary="Determine delay between pathfinding states"
+							/>
 							<Slider
-								defaultValue={100}
 								aria-labelledby="discrete-slider"
 								valueLabelDisplay="auto"
+								onChange={handleSliderChange}
 								step={25}
 								min={0}
 								max={250}
+								value={animationSpeed}
 							/>
 						</ListItem>
 					</List>

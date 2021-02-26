@@ -35,7 +35,9 @@ const useStyles = makeStyles((theme: Theme) =>
 		extendedIcon: {
 			marginRight: theme.spacing(1),
 		},
-		alert: {},
+		rightAligned: {
+			marginLeft: 'auto',
+		},
 	}),
 );
 
@@ -97,7 +99,6 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 					onClose={() => {
 						setOpenAlert(false);
 					}}
-					className={classes.alert}
 					variant="filled"
 					severity={alertSeverity}
 				>
@@ -109,7 +110,9 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 				<AppBar className={classes.appBar} position="static">
 					<Toolbar>
 						<CriteriaSearch />
-						<RecurserSearch />
+						<div className={classes.rightAligned}>
+							<RecurserSearch />
+						</div>
 						<PathfindingSettings />
 					</Toolbar>
 				</AppBar>

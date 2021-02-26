@@ -53,7 +53,8 @@ export const NetworkGraph: React.FC<Props> = () => {
 				ref={fgRef}
 				graphData={graphData}
 				nodeLabel="name"
-				nodeAutoColorBy="id"
+				nodeAutoColorBy="name"
+				nodeVal={node => (typeof node.id == 'string' ? 2 : 1)}
 				onNodeClick={handleNodeClick}
 				onNodeRightClick={handleNodeRightClick}
 				onBackgroundClick={handleBackgroundClick}
