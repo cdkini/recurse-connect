@@ -8,7 +8,7 @@ import { FuzzySearchResults } from '../FuzzySearchResults/FuzzySearchResults';
 import { NetworkContext } from '../../contexts/NetworkContext/NetworkContext';
 import { RecurserNode } from '../../types/RecurserGraph';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Alerter, Pathfinder } from '../../utils/graphUtils';
+import { Visualizer, Pathfinder } from '../../utils/graphUtils';
 import { RecurserSearch } from '../RecurserSearch/RecurserSearch';
 import { CriteriaSearch } from '../CriteriaSearch/CriteriaSearch';
 import { PathfindingSettings } from '../PathfindingSettings/PathfindingSettings';
@@ -67,14 +67,13 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 		'error' | 'warning' | 'info' | 'success' | undefined
 	>(undefined);
 
-	const alerter = new Alerter(setAlertSeverity, setAlertMessage);
-	const pathfinder = new Pathfinder(
+	const alerter = new Visualizer(
 		fgRef,
-		userNode,
-		graphData,
 		setGraphData,
-		alerter,
+		setAlertSeverity,
+		setAlertMessage,
 	);
+	const pathfinder = new Pathfinder(userNode, graphData, alerter);
 
 	return (
 		<FuzzySearchContext.Provider

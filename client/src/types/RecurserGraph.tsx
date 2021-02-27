@@ -1,7 +1,9 @@
 import { NodeObject } from 'react-force-graph-2d';
 
+export type RecurserId = string | number | undefined;
+
 export interface RecurserNode extends NodeObject {
-	id: string | number | undefined;
+	id: RecurserId;
 	name: string | undefined;
 	profilePath: string | undefined;
 	imagePath: string | undefined;
