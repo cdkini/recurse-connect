@@ -11,7 +11,7 @@
     "start": "react-scripts start",
     "test": "react-scripts test",
     "ts-build": "rm -rf build && (find . -name '*.tsx' | xargs tsc --jsx react)",
-    "ts-watch": "find . -name '*.tsx' | xargs tsc -w --jsx react"
+    "ts-watch": "find src/ -name '*.tsx' | xargs tsc -w --jsx react"
   },
   "keywords": [],
   "license": "ISC",
@@ -46,6 +46,8 @@
   },
   "dependencies": {
     "@date-io/date-fns": "^1.3.13",
+    "@emotion/css": "^11.1.3",
+    "@emotion/react": "^11.0.0-next.10",
     "@material-ui/core": "^4.11.3",
     "@material-ui/data-grid": "^4.0.0-alpha.20",
     "@material-ui/icons": "^4.11.2",
@@ -57,15 +59,22 @@
     "@types/react-router-dom": "^5.1.7",
     "bootstrap": "^4.6.0",
     "date-fns": "^2.0.0-beta.5",
+    "emotion": "^11.0.0",
+    "final-form": "^4.20.1",
+    "final-form-material-ui": "^0.3.0",
     "fuse.js": "^6.4.6",
     "google-closure-library": "^20210202.0.0",
     "heapify": "^0.4.0",
     "material-auto-rotating-carousel": "^3.0.2",
     "pretty-quick": "^3.1.0",
     "react-bootstrap": "^1.4.3",
+    "react-final-form": "^6.5.2",
     "react-force-graph-2d": "^1.18.2",
+    "react-quill": "^1.3.5",
     "react-router-dom": "^5.2.0",
-    "react-swipeable-views": "^0.13.9"
+    "react-swipeable-views": "^0.13.9",
+    "slate": "^0.59.0",
+    "slate-history": "^0.59.0"
   },
   "proxy": "http://localhost:5000/",
   "browserslist": {
