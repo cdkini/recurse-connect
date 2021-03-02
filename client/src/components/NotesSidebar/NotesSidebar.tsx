@@ -9,8 +9,13 @@ import {
 	Avatar,
 	ListItemText,
 	Divider,
+	Typography,
 } from '@material-ui/core';
 import List from '@material-ui/core/List';
+// import { NotesContext } from '../../contexts/NotesContext/NotesContext';
+// import { RecurserId } from '../../types/RecurserGraph';
+import { RecurserNote } from '../../types/RecurserNote';
+import { RecurserNode } from '../../types/RecurserGraph';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -71,29 +76,58 @@ const useStyles = makeStyles((theme: Theme) =>
 	}),
 );
 
-interface Props {}
+interface Props {
+	profileId: number;
+	notes: Array<RecurserNote>;
+	profiles: Array<RecurserNode>;
+	focusedNote: RecurserNote | null;
+	setFocusedNote: React.Dispatch<React.SetStateAction<RecurserNote | null>>;
+}
 
-export const NotesSidebar: React.FC<Props> = () => {
+export const NotesSidebar: React.FC<Props> = (props: Props) => {
 	const classes = useStyles();
+
+	function getImagePath(note: RecurserNote) {
+		if (note.participants) {
+			let id =
+				note.participants[Math.floor(Math.random() * note.participants.length)];
+			for (let profile of props.profiles) {
+				if (profile.id === id) {
+					return profile.imagePath;
+				}
+			}
+		}
+		return 'https://d29xw0ra2h4o4u.cloudfront.net/assets/logo_square-051508b5ecf8868635aea567bb86f423f4d1786776e5dfce4adf2bc7edf05804.png';
+	}
+
+	const handleNoteClick = (note: RecurserNote) => {
+		console.log(note);
+		props.setFocusedNote(note);
+		console.log(props.focusedNote);
+	};
 
 	return (
 		<List dense className={classes.root}>
-			{[0, 1, 2, 3].map(value => {
-				const labelId = `checkbox-list-secondary-label-${value}`;
+			{props.notes.map(note => {
+				const labelId = `checkbox-list-secondary-label-${note}`;
 				return (
 					<div>
-						<ListItem key={value} button>
+						<ListItem
+							key={note.id}
+							onClick={() => handleNoteClick(note)}
+							button
+						>
 							<ListItemAvatar>
-								<Avatar
-									alt={`Avatar n°${value + 1}`}
-									src={`/static/images/avatar/${value + 1}.jpg`}
-								/>
+								<Avatar alt={'R'} src={getImagePath(note)} />
 							</ListItemAvatar>
 							<ListItemText
 								id={labelId}
-								primary={`Line item ${value + 1}`}
-								secondary={'January 1, 1996'}
+								primary={`${note.title}`}
+								secondary={note.date.toLocaleString().substring(0, 16)}
 							/>
+							<Typography variant="caption">
+								<i>{note.tags}</i>
+							</Typography>
 						</ListItem>
 						<Divider component="li" />
 					</div>

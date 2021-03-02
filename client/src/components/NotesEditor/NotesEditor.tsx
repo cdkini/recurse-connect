@@ -21,9 +21,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { Paper, Grid, CssBaseline } from '@material-ui/core';
 
 import { Node } from 'slate';
-import { NotesContext } from '../../contexts/NotesContext/NotesContext';
+// import { NotesContext } from '../../contexts/NotesContext/NotesContext';
 import { RecurserNode } from '../../types/RecurserGraph';
 import { Autocomplete } from '@material-ui/lab';
+import { RecurserNote } from '../../types/RecurserNote';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -88,19 +89,24 @@ const initialContent = [
 	},
 ];
 
-interface Props {}
+interface Props {
+	profileId: number;
+	profiles: Array<RecurserNode>;
+	focusedNote: RecurserNote;
+}
 
-export const NotesEditor: React.FC<Props> = () => {
+export const NotesEditor: React.FC<Props> = (props: Props) => {
 	const classes = useStyles();
-	const { profileId, graphData } = React.useContext(NotesContext);
-	const [recursers, setRecursers] = React.useState<Array<RecurserNode>>([]);
-
-	const [title, setTitle] = React.useState<string>('My new note!');
-	const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-		new Date(),
+	const [participants, setParticipants] = React.useState<Array<RecurserNode>>(
+		[],
 	);
 
-	const [tags, setTags] = React.useState<string>('');
+	const [title, setTitle] = React.useState<string>(props.focusedNote.title);
+	const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+		props.focusedNote.date,
+	);
+
+	const [tags, setTags] = React.useState<string | null>(props.focusedNote.tags);
 	const [content, setContent] = React.useState<Node[]>(initialContent);
 
 	const handleTitleChange = (event: React.ChangeEvent<{ value: string }>) => {
@@ -117,25 +123,35 @@ export const NotesEditor: React.FC<Props> = () => {
 
 	const handleSaveClick = () => {
 		let body = {
-			author: profileId,
+			author: props.profileId,
 			title: title,
 			date: selectedDate,
-			participants: recursers.map(r => r.id),
-			tags: tags.split(', ').map(t => t.trim()),
+			participants: participants.map(r => r.id),
+			tags: tags ? tags.split(', ').map(t => t.trim()) : null,
 			content: content,
 		};
-		console.log(body);
 		fetch('http://localhost:5000/api/v1/notes', {
 			method: 'POST', // or 'PUT'
 			headers: {
+				Accept: 'application/json',
 				'Content-Type': 'application/json',
 			},
-			mode: 'no-cors',
+			// mode: 'no-cors',
 			body: JSON.stringify(body),
 		});
 	};
 
-	const handleDeleteClick = () => {};
+	const handleDeleteClick = () => {
+		fetch(
+			'http://localhost:5000/api/v1/notes/' +
+				props.profileId.toString() +
+				'/' +
+				props.focusedNote.id,
+			{
+				method: 'DELETE',
+			},
+		);
+	};
 
 	return (
 		<div style={{ padding: 16, margin: 'auto', maxWidth: 1500 }}>
@@ -172,16 +188,16 @@ export const NotesEditor: React.FC<Props> = () => {
 					<Grid item xs={12}>
 						<Autocomplete
 							multiple
-							options={graphData.nodes}
+							options={Array.from(props.profiles.values())}
 							onChange={(_event: any, newValue: Array<RecurserNode>) => {
-								setRecursers(newValue);
+								setParticipants(newValue);
 							}}
 							getOptionLabel={option =>
 								option.profilePath
 									? `${option.name} (${option.batchShortName})`
 									: `${option.name}`
 							}
-							value={recursers}
+							value={participants}
 							renderInput={params => (
 								<TextField {...params} variant="standard" label="Recursers" />
 							)}
@@ -201,6 +217,8 @@ export const NotesEditor: React.FC<Props> = () => {
 					</Grid>
 					<Grid container xs={12} justify="flex-end">
 						<Button
+							id="delete"
+							name="deleteButton"
 							variant="contained"
 							color="primary"
 							size="small"
@@ -214,6 +232,8 @@ export const NotesEditor: React.FC<Props> = () => {
 							Delete
 						</Button>
 						<Button
+							id="save"
+							name="saveButton"
 							variant="contained"
 							color="primary"
 							size="small"

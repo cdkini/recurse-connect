@@ -5,8 +5,7 @@ import { NotesEditor } from '../../components/NotesEditor/NotesEditor';
 import { RecurserNote } from '../../types/RecurserNote';
 import { NavigationBar } from '../../components/NavigationBar/NavigationBar';
 import { makeStyles, Theme, createStyles, Toolbar } from '@material-ui/core';
-import { RecurserGraph } from '../../types/RecurserGraph';
-import { NotesContext } from '../../contexts/NotesContext/NotesContext';
+import { RecurserNode } from '../../types/RecurserGraph';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -26,16 +25,13 @@ interface Props {
 export const Notes: React.FC<Props> = (props: Props) => {
 	const classes = useStyles();
 
-	const [graphData, setGraphData] = React.useState<RecurserGraph>({
-		nodes: [],
-		links: [],
-	});
+	const [profiles, setProfiles] = React.useState<Array<RecurserNode>>([]);
 
 	React.useEffect(() => {
 		fetch('/api/v1/graph/' + props.profileId.toString())
 			.then(res => res.json())
 			.then(data => {
-				setGraphData(data);
+				setProfiles(data.nodes);
 			});
 	}, []);
 
@@ -45,28 +41,40 @@ export const Notes: React.FC<Props> = (props: Props) => {
 		fetch('/api/v1/notes/' + props.profileId.toString())
 			.then(res => res.json())
 			.then(data => {
-				setNotes(data);
+				setNotes(Object.values(data.notes));
 			});
 	}, []);
+
+	const [focusedNote, setFocusedNote] = React.useState<RecurserNote | null>(
+		null,
+	);
 
 	const profileId = props.profileId;
 
 	return (
-		<NotesContext.Provider
-			value={{
-				profileId,
-				graphData,
-				notes,
-			}}
-		>
+		<div>
 			<NavigationBar />
 			<div className={classes.content}>
 				<Toolbar></Toolbar>
-				<NotesSidebar></NotesSidebar>
+				<NotesSidebar
+					profileId={profileId}
+					notes={notes}
+					profiles={profiles}
+					focusedNote={focusedNote}
+					setFocusedNote={setFocusedNote}
+				/>
 				<div className={classes.shiftTextRight}>
-					<NotesEditor />
+					{focusedNote ? (
+						<NotesEditor
+							profileId={profileId}
+							profiles={profiles}
+							focusedNote={focusedNote}
+						/>
+					) : (
+						<div></div>
+					)}
 				</div>
 			</div>
-		</NotesContext.Provider>
+		</div>
 	);
 };
