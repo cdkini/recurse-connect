@@ -10,8 +10,10 @@ import {
 	ListItemText,
 	Divider,
 	Typography,
+	TextField,
 } from '@material-ui/core';
 import List from '@material-ui/core/List';
+// import AddIcon from '@material-ui/icons/Add';
 // import { NotesContext } from '../../contexts/NotesContext/NotesContext';
 // import { RecurserId } from '../../types/RecurserGraph';
 import { RecurserNote } from '../../types/RecurserNote';
@@ -57,11 +59,8 @@ const useStyles = makeStyles((theme: Theme) =>
 			overflowX: 'hidden',
 		},
 		newNoteInput: {
-			width: '100%',
-			margin: '0px',
-			height: '35px',
-			outline: 'none',
-			border: 'none',
+			width: '80%',
+			left: theme.spacing(2),
 			paddingLeft: '5px',
 			'&:focus': {
 				outline: '2px solid rgba(81, 203, 238, 1)',
@@ -72,6 +71,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			backgroundColor: '#28787c',
 			borderRadius: '0px',
 			color: 'white',
+		},
+		fab: {
+			margin: theme.spacing(1),
+			left: theme.spacing(1),
 		},
 	}),
 );
@@ -107,32 +110,38 @@ export const NotesSidebar: React.FC<Props> = (props: Props) => {
 	};
 
 	return (
-		<List dense className={classes.root}>
-			{props.notes.map(note => {
-				const labelId = `checkbox-list-secondary-label-${note}`;
-				return (
-					<div>
-						<ListItem
-							key={note.id}
-							onClick={() => handleNoteClick(note)}
-							button
-						>
-							<ListItemAvatar>
-								<Avatar alt={'R'} src={getImagePath(note)} />
-							</ListItemAvatar>
-							<ListItemText
-								id={labelId}
-								primary={`${note.title}`}
-								secondary={note.date.toLocaleString().substring(0, 16)}
-							/>
-							<Typography variant="caption">
-								<i>{note.tags}</i>
-							</Typography>
-						</ListItem>
-						<Divider component="li" />
-					</div>
-				);
-			})}
-		</List>
+		<div>
+			<List dense className={classes.root}>
+				<TextField
+					className={classes.newNoteInput}
+					label="Find notes by tag"
+				></TextField>
+				{props.notes.map(note => {
+					const labelId = `checkbox-list-secondary-label-${note}`;
+					return (
+						<div>
+							<ListItem
+								key={note.id}
+								onClick={() => handleNoteClick(note)}
+								button
+							>
+								<ListItemAvatar>
+									<Avatar alt={'R'} src={getImagePath(note)} />
+								</ListItemAvatar>
+								<ListItemText
+									id={labelId}
+									primary={`${note.title}`}
+									secondary={note.date.toLocaleString().substring(0, 16)}
+								/>
+								<Typography variant="caption">
+									<i>{note.tags}</i>
+								</Typography>
+							</ListItem>
+							<Divider component="li" />
+						</div>
+					);
+				})}
+			</List>
+		</div>
 	);
 };
