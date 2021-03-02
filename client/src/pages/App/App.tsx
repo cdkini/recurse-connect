@@ -11,6 +11,7 @@ import {
 } from '../../components/ProtectedRoute/ProtectedRoute';
 import { Switch, Route } from 'react-router-dom';
 import { useSessionContext } from '../../contexts/SessionContext/SessionContext';
+import { Notes } from '../Notes/Notes';
 
 // https://stackoverflow.com/questions/59422159/redirecting-a-user-to-the-page-they-requested-after-successful-authentication-wi/59423442#59423442
 const App: React.FC = () => {
@@ -40,6 +41,11 @@ const App: React.FC = () => {
 					path="/network"
 					exact
 					render={props => <Network {...props} profileId={3721} />}
+				/>
+				<Route
+					path="/notes"
+					exact
+					render={props => <Notes {...props} profileId={3721} />}
 				/>
 				<ProtectedRoute
 					{...defaultProtectedRouteProps}

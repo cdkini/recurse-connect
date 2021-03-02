@@ -40,7 +40,7 @@ export const TagIcon: React.FC<Props> = (props: Props) => {
 		for (let i = 0; i < arr.length; i++) {
 			items.push({
 				author: profileId,
-				participants: [props.currNode.id],
+				participant: props.currNode.id,
 				name: arr[i],
 			});
 		}
@@ -52,9 +52,10 @@ export const TagIcon: React.FC<Props> = (props: Props) => {
 		fetch('/api/v1/tags', {
 			method: 'POST', // or 'PUT'
 			headers: {
+				Accept: 'application/json',
 				'Content-Type': 'application/json',
 			},
-			mode: 'no-cors',
+			// mode: 'no-cors',
 			body: JSON.stringify(body),
 		});
 

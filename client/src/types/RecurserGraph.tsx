@@ -10,7 +10,7 @@ export interface RecurserNode extends NodeObject {
 	location: string | undefined;
 	company: number | undefined;
 	bio: string | undefined;
-	interests: string | undefined;
+	interests: Array<string | undefined>;
 	beforeRc: string | undefined;
 	duringRc: string | undefined;
 	email: string | undefined;

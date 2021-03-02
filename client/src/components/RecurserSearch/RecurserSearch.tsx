@@ -37,7 +37,7 @@ export const RecurserSearch: React.FC<Props> = () => {
 	const handleRecurserSearchSubmit = (event: React.KeyboardEvent) => {
 		if (event.keyCode === 13 && recurserSearchValue) {
 			setOpenAlert(true);
-			pathfinder.dfs({
+			pathfinder.djikstras({
 				sourceId: userNode.id,
 				targetId: recurserSearchValue.id,
 				animationDelay: 100,
