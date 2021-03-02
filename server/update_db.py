@@ -1,9 +1,21 @@
 import requests
 import time
 
-from api import db, models, secrets
+from flask import Flask
+from config import Config
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from authlib.integrations.flask_client import OAuth
 from datetime import datetime
 
+from api import models, secrets
+
+
+app = Flask(__name__)
+app.config.from_object(Config)
+oauth = OAuth(app)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 connections = 0
 
 
@@ -70,8 +82,6 @@ def update_db(profiles, db):
     """
     start = time.time()
 
-    visited_batches = []
-
     for profile in profiles:
         _update_profile_table(profile, db)
         _update_location_table(profile, db)
@@ -112,24 +122,22 @@ def _update_profile_table(profile, db):
     location = profile.get("current_location")
     location_id = None if not location else location.get("id")
 
-    company = profile.get("company ")
+    company = profile.get("company")
     company_id = None if not company else company.get("id")
 
-    profile_entry = models.Profile(
-        id=profile_id,
-        name=name,
-        profile_path=profile_path,
-        image_path=image_path,
-        interests=interests,
-        location_id=location_id,
-        company_id=company_id,
-        before_rc=before_rc,
-        bio=bio,
-        during_rc=during_rc,
-        email=email,
-        github=github,
-        twitter=twitter
-    )
+    profile_entry = models.Profile(id=profile_id,
+                                   name=name,
+                                   profile_path=profile_path,
+                                   image_path=image_path,
+                                   interests=interests,
+                                   location_id=location_id,
+                                   company_id=company_id,
+                                   before_rc=before_rc,
+                                   bio=bio,
+                                   during_rc=during_rc,
+                                   email=email,
+                                   github=github,
+                                   twitter=twitter)
     db.session.merge(profile_entry)
 
 
@@ -159,8 +167,9 @@ def _update_batch_and_stint_tables(profile, db):
         name = batch.get("name")
         short_name = batch.get("short_name")
 
-        batch_entry = models.Batch(
-            id=batch_id, name=name, short_name=short_name)
+        batch_entry = models.Batch(id=batch_id,
+                                   name=name,
+                                   short_name=short_name)
         db.session.merge(batch_entry)
 
         # Update 'Stint' db table
