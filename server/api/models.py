@@ -3,13 +3,15 @@ from sqlalchemy.inspection import inspect
 
 
 class Serializer(object):
-
     @staticmethod
     def serialize_list(obj_list):
         return [obj.serialize() for obj in obj_list]
 
     def serialize(self):
-        return {self._to_camel_case(obj): getattr(self, obj) for obj in inspect(self).attrs.keys()}
+        return {
+            self._to_camel_case(obj): getattr(self, obj)
+            for obj in inspect(self).attrs.keys()
+        }
 
     def _to_camel_case(self, snake_str):
         components = snake_str.split('_')
@@ -23,7 +25,7 @@ class Profile(db.Model, Serializer):
     image_path = db.Column(db.String(256))
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"))
     company_id = db.Column(db.Integer, db.ForeignKey("company.id"))
-    bio = db.Column(db.String(512))
+    bio = db.Column(db.String(1024))
     interests = db.Column(db.String(512))
     before_rc = db.Column(db.String(512))
     during_rc = db.Column(db.String(512))
@@ -66,6 +68,37 @@ class Stint(db.Model, Serializer):
 class Company(db.Model, Serializer):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
+
+    def __repr__(self):
+        return str(self.__dict__)
+
+
+class Note(db.Model, Serializer):
+    id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey("profile.id"))
+    title = db.Column(db.String(128))
+    date = db.Column(db.DateTime)
+    content = db.Column(db.JSON)
+
+    def __repr__(self):
+        return str(self.__dict__)
+
+
+# What tags are associated with a given note?
+class Tag(db.Model, Serializer):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    note_id = db.Column(db.Integer, db.ForeignKey("note.id"))
+
+    def __repr__(self):
+        return str(self.__dict__)
+
+
+# Which Recursers are associated with a given note?
+class Participant(db.Model, Serializer):
+    id = db.Column(db.Integer, primary_key=True)
+    profile_id = db.Column(db.Integer, db.ForeignKey("profile.id"))
+    note_id = db.Column(db.Integer, db.ForeignKey("note.id"))
 
     def __repr__(self):
         return str(self.__dict__)
