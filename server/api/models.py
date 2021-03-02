@@ -75,7 +75,7 @@ class Company(db.Model, Serializer):
 
 class Note(db.Model, Serializer):
     id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey("profile.id"))
+    author = db.Column(db.Integer, db.ForeignKey("profile.id"))
     title = db.Column(db.String(128))
     date = db.Column(db.DateTime)
     content = db.Column(db.JSON)
@@ -84,10 +84,12 @@ class Note(db.Model, Serializer):
         return str(self.__dict__)
 
 
-# What tags are associated with a given note?
+# What tags are associated with a given note? Who is associated with a tag?
 class Tag(db.Model, Serializer):
     id = db.Column(db.Integer, primary_key=True)
+    author = db.Column(db.Integer, db.ForeignKey("profile.id"))
     name = db.Column(db.String(64))
+    participant = db.Column(db.Integer, db.ForeignKey("profile.id"))
     note_id = db.Column(db.Integer, db.ForeignKey("note.id"))
 
     def __repr__(self):
@@ -95,10 +97,10 @@ class Tag(db.Model, Serializer):
 
 
 # Which Recursers are associated with a given note?
-class Participant(db.Model, Serializer):
-    id = db.Column(db.Integer, primary_key=True)
-    profile_id = db.Column(db.Integer, db.ForeignKey("profile.id"))
-    note_id = db.Column(db.Integer, db.ForeignKey("note.id"))
+# class Participant(db.Model, Serializer):
+#     id = db.Column(db.Integer, primary_key=True)
+#     profile_id = db.Column(db.Integer, db.ForeignKey("profile.id"))
+#     note_id = db.Column(db.Integer, db.ForeignKey("note.id"))
 
-    def __repr__(self):
-        return str(self.__dict__)
+#     def __repr__(self):
+#         return str(self.__dict__)

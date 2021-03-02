@@ -1,5 +1,5 @@
-from . import oauth, utils, app
-from flask import redirect, url_for, session
+from . import oauth, graph_utils, note_utils, app
+from flask import redirect, url_for, session, request
 import requests
 import humps
 
@@ -35,20 +35,24 @@ def logout():
 def auth():
     recurse = oauth.create_client("recurse")
     token = recurse.authorize_access_token()
-    print(token)
+    # print(token)
     access_token = token["access_token"]
     r = requests.get(
         f"https://www.recurse.com/api/v1/profiles/me/?access_token={access_token}"
     )
     r.raise_for_status()
     session["user"] = r.json()["id"]
-    print(session["user"])
+    # print(session["user"])
     return redirect("/")
 
 
+@app.route("/api/v1/graph/", methods=["GET"])
 @app.route("/api/v1/graph/<profile_id>", methods=["GET"])
-def get_graph_data(profile_id):
-    data = utils.get_graph_data(profile_id)
+def get_graph_data(profile_id=None):
+    if not profile_id:
+        data = graph_utils.get_all_graph_data()
+    else:
+        data = graph_utils.get_graph_data(profile_id)
     for key in data:
         data[key] = humps.camelize(data[key])
     return data
@@ -56,6 +60,37 @@ def get_graph_data(profile_id):
 
 @app.route("/api/v1/users/<profile_id>", methods=["GET"])
 def get_user_data(profile_id):
-    data = utils.get_user_data(profile_id)
+    data = graph_utils.get_user_data(profile_id)
     humps.camelize(data)
+    return data
+
+
+@app.route("/api/v1/notes/<profile_id>", methods=["GET"])
+def get_user_notes(profile_id):
+    data = note_utils.get_user_notes(profile_id)
+    return data
+
+
+@app.route("/api/v1/notes", methods=["POST"])
+def post_user_note():
+    data = request.json
+    note_utils.post_user_note(data)
+    return data
+
+
+@app.route("/api/v1/notes/<profile_id>/<note_id>", methods=["PUT", "DELETE"])
+def put_user_note(profile_id, note_id):
+    if request.method == "PUT":
+        data = request.json
+        note_utils.update_user_note(data, profile_id, note_id)
+        return data
+    if request.method == "DELETE":
+        note_utils.delete_user_note(profile_id, note_id)
+        return f"Deleted note {note_id} for user {profile_id}"
+
+
+@app.route("/api/v1/tags", methods=["POST"])
+def post_user_tags():
+    data = request.json
+    note_utils.post_user_tags(data)
     return data

@@ -12,11 +12,30 @@ def get_user_data(profile_id):
     return data
 
 
+def get_all_graph_data():
+    query = db.session.query(
+        Profile, Location, Company, Stint, Batch
+    ).select_from(
+        Profile
+    ).join(
+        Location, Location.id == Profile.location_id, isouter=True
+    ).join(
+        Company, Company.id == Profile.company_id, isouter=True
+    ).join(
+        Stint, Stint.profile_id == Profile.id
+    ).join(
+        Batch, Batch.id == Stint.batch_id
+    ).order_by(
+        Stint.start_date
+    ).all()
+
+    data = _generate_graph_data(query)
+    return data
+
+
 def get_graph_data(profile_id):
-    # 1. Find all stints the user has participated in
     user_stints = db.session.query(Stint).filter(Stint.profile_id == profile_id).all()
 
-    # 2. For each stint. find all participants/batches that overlap
     for user_stint in user_stints:
         query = db.session.query(
             Profile, Location, Company, Stint, Batch
@@ -36,26 +55,27 @@ def get_graph_data(profile_id):
             Stint.start_date
         ).all()
 
-        # 3. Parse query to determine Recurser nodes and edges
-        recurser_nodes = _get_recurser_nodes(query)
-        recurser_edges = _get_recurser_edges(query)
-
-        # 4. Create nodes and edges to represent batches
-        batch_data = _get_batch_data(query)
-        print(batch_data)
-        batch_nodes = _get_batch_nodes(query, batch_data)
-        batch_edges = _get_batch_edges(query, batch_data)
-
-        # 5. Combine Recurser and batch graph objects
-        nodes = recurser_nodes + batch_nodes
-        edges = recurser_edges + batch_edges
-
-        data = {
-            "nodes": nodes,
-            "links": edges
-        }
-
+        data = _generate_graph_data(query)
         return data
+
+
+def _generate_graph_data(query):
+    recurser_nodes = _get_recurser_nodes(query)
+    recurser_edges = _get_recurser_edges(query)
+
+    batch_data = _get_batch_data(query)
+    batch_nodes = _get_batch_nodes(query, batch_data)
+    batch_edges = _get_batch_edges(query, batch_data)
+
+    nodes = recurser_nodes + batch_nodes
+    edges = recurser_edges + batch_edges
+
+    data = {
+        "nodes": nodes,
+        "links": edges
+    }
+
+    return data
 
 
 def _get_batch_data(query):
@@ -95,7 +115,7 @@ def _get_recurser_nodes(query):
             "location": row.Location.name if row.Location else None,
             "company": row.Company.name if row.Company else None,
             "bio": row.Profile.bio,
-            "interests": row.Profile.interests,
+            "interests": row.Profile.interests.split(", ") if row.Profile.interests else None,
             "before_rc": row.Profile.before_rc,
             "during_rc": row.Profile.during_rc,
             "email": row.Profile.email,
@@ -147,5 +167,4 @@ def _get_batch_edges(query, batch_data):
 
 
 def _get_overlap(batch1, batch2):
-    print(batch1, batch2)
     return min(batch1["end_date"] - batch2["start_date"], batch2["end_date"] - batch1["start_date"]).days + 1
