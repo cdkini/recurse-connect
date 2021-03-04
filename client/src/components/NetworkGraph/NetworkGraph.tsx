@@ -59,6 +59,7 @@ export const NetworkGraph: React.FC<Props> = () => {
 				onNodeRightClick={handleNodeRightClick}
 				onBackgroundClick={handleBackgroundClick}
 				onBackgroundRightClick={handleBackgroundRightClick}
+				linkWidth={1.5}
 				linkDirectionalParticles={1.4}
 				linkDirectionalParticleWidth={2}
 			/>

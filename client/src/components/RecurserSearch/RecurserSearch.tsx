@@ -5,6 +5,7 @@ import { RecurserNode } from '../../types/RecurserGraph';
 import { TextField, FormHelperText, FormControl } from '@material-ui/core';
 import { FuzzySearchContext } from '../../contexts/FuzzySearchContext/FuzzySearchContext';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+// import { AlgoArgs } from '../../utils/graphUtils';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -20,9 +21,12 @@ const useStyles = makeStyles((theme: Theme) =>
 	}),
 );
 
-interface Props {}
+interface Props {
+	animationSpeed: number | Array<number>;
+	selectedAlgo: string;
+}
 
-export const RecurserSearch: React.FC<Props> = () => {
+export const RecurserSearch: React.FC<Props> = (props: Props) => {
 	const classes = useStyles();
 	const { userNode, graphData } = React.useContext(NetworkContext);
 	const {
@@ -37,10 +41,10 @@ export const RecurserSearch: React.FC<Props> = () => {
 	const handleRecurserSearchSubmit = (event: React.KeyboardEvent) => {
 		if (event.keyCode === 13 && recurserSearchValue) {
 			setOpenAlert(true);
-			pathfinder.djikstras({
+			pathfinder.runSelectedAlgo(props.selectedAlgo, {
 				sourceId: userNode.id,
 				targetId: recurserSearchValue.id,
-				animationDelay: 100,
+				animationDelay: props.animationSpeed,
 			});
 		}
 	};

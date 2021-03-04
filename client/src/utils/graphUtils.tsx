@@ -61,8 +61,10 @@ export class Visualizer {
 	}
 
 	/** Used to pause between visualization states. */
-	public sleep(ms: number) {
-		return new Promise(resolve => setTimeout(resolve, ms));
+	public sleep(ms: number | Array<number>): Promise<any> | void {
+		if (typeof ms === 'number') {
+			return new Promise(resolve => setTimeout(resolve, ms));
+		}
 	}
 
 	/** Resets graph colors to grayscale between visualizations. */
@@ -104,7 +106,7 @@ export class Visualizer {
 export interface AlgoArgs {
 	sourceId: RecurserId;
 	targetId: RecurserId;
-	animationDelay: number;
+	animationDelay: number | Array<number>;
 }
 
 /** Driver class responsible for determination of paths to be used in visualization.
@@ -158,6 +160,23 @@ export class Pathfinder {
 		}, new Map<RecurserId, Array<RecurserEdge>>());
 	}
 
+	public async runSelectedAlgo(algo: string, args: AlgoArgs) {
+		switch (algo) {
+			case 'dfs':
+				this.dfs(args);
+				break;
+			case 'bfs':
+				this.bfs(args);
+				break;
+			case 'djikstras':
+				this.djikstras(args);
+				break;
+			case 'astar':
+				this.astar(args);
+				break;
+		}
+	}
+
 	/**
 	 * Performs an unweighted depth-first search on graph data, visualizing state at each step.
 	 * @param {AlgoArgs} args - Source, target, and animation delay
@@ -172,7 +191,7 @@ export class Pathfinder {
 		let start = new Date().getTime();
 
 		this.visualizer.center(this.userNode.x, this.userNode.y, 100);
-		await this.visualizer.sleep(2000);
+		args.animationDelay ? await this.visualizer.sleep(2000) : null;
 
 		let stack: Array<[RecurserId, Array<RecurserEdge>]> = [
 			[args.sourceId, [this.recurserEdgeMap.get(args.sourceId)![0]]],
@@ -221,7 +240,9 @@ export class Pathfinder {
 					`Marking ${this.visualizer.stringifyNode(currNode)} as visited`,
 				);
 			}
-			await this.visualizer.sleep(args.animationDelay);
+			args.animationDelay
+				? await this.visualizer.sleep(args.animationDelay)
+				: null;
 			delete currEdge.color;
 
 			visited.add(currNode.id);
@@ -255,7 +276,9 @@ export class Pathfinder {
 					}
 					paths[i].color = Color.Update;
 				}
-				await this.visualizer.sleep(args.animationDelay);
+				args.animationDelay
+					? await this.visualizer.sleep(args.animationDelay)
+					: null;
 				delete paths[i].color;
 			}
 		}
@@ -277,7 +300,7 @@ export class Pathfinder {
 		let start = new Date().getTime();
 
 		this.visualizer.center(this.userNode.x, this.userNode.y, 100);
-		await this.visualizer.sleep(2000);
+		args.animationDelay ? await this.visualizer.sleep(2000) : null;
 
 		let queue: Array<[RecurserId, Array<RecurserEdge>]> = [
 			[args.sourceId, [this.recurserEdgeMap.get(args.sourceId)![0]]],
@@ -326,7 +349,9 @@ export class Pathfinder {
 					`Marking ${this.visualizer.stringifyNode(currNode)} as visited`,
 				);
 			}
-			await this.visualizer.sleep(args.animationDelay);
+			args.animationDelay
+				? await this.visualizer.sleep(args.animationDelay)
+				: null;
 			delete currEdge.color;
 
 			visited.add(currNode.id);
@@ -360,7 +385,9 @@ export class Pathfinder {
 					}
 					paths[i].color = Color.Update;
 				}
-				await this.visualizer.sleep(args.animationDelay);
+				args.animationDelay
+					? await this.visualizer.sleep(args.animationDelay)
+					: null;
 				delete paths[i].color;
 			}
 		}
@@ -438,7 +465,9 @@ export class Pathfinder {
 			curr = prev;
 		}
 
-		this.visualizeShortestPath(shortestPath, args.animationDelay);
+		if (typeof args.animationDelay === 'number') {
+			this.visualizeShortestPath(shortestPath, args.animationDelay);
+		}
 	}
 
 	/**
@@ -539,7 +568,9 @@ export class Pathfinder {
 			curr = prev;
 		}
 
-		this.visualizeShortestPath(shortestPath, args.animationDelay);
+		if (typeof args.animationDelay === 'number') {
+			this.visualizeShortestPath(shortestPath, args.animationDelay);
+		}
 	}
 
 	/**
@@ -575,7 +606,7 @@ export class Pathfinder {
 		let start = new Date().getTime();
 
 		this.visualizer.center(this.userNode.x, this.userNode.y, 100);
-		await this.visualizer.sleep(2000);
+		delay ? await this.visualizer.sleep(2000) : null;
 
 		for (let i = 0; i < shortestPath.length; i++) {
 			let id = shortestPath[i];
@@ -590,7 +621,7 @@ export class Pathfinder {
 				this.visualizer.center(currNode.x, currNode.y, 1000);
 			}
 			currNode.color = Color.Success;
-			await this.visualizer.sleep(delay);
+			delay ? await this.visualizer.sleep(delay) : null;
 
 			let paths = this.recurserEdgeMap.get(id)!;
 			let nextEdge: RecurserEdge | null = null;
@@ -626,7 +657,7 @@ export class Pathfinder {
 					invalidNodes.push(targetNode);
 				}
 
-				await this.visualizer.sleep(delay);
+				delay ? await this.visualizer.sleep(delay) : null;
 				delete edge.color;
 
 				if (
@@ -646,7 +677,7 @@ export class Pathfinder {
 			for (let node of invalidNodes) {
 				node.color = Color.Failure;
 			}
-			await this.visualizer.sleep(delay);
+			delay ? await this.visualizer.sleep(delay) : null;
 
 			if (nextEdge) {
 				nextEdge.color = Color.Success;

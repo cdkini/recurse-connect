@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		appBar: {
 			background: '#3dc06c',
+			width: '100%',
+			position: 'fixed',
+			bottom: 0,
 		},
 		menuButton: {
 			marginRight: theme.spacing(2),
@@ -66,6 +69,10 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 	const [alertSeverity, setAlertSeverity] = React.useState<
 		'error' | 'warning' | 'info' | 'success' | undefined
 	>(undefined);
+	const [animationSpeed, setAnimationSpeed] = React.useState<number | number[]>(
+		100,
+	);
+	const [selectedAlgo, setSelectedAlgo] = React.useState<string>('dfs');
 
 	const alerter = new Visualizer(
 		fgRef,
@@ -110,9 +117,16 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 					<Toolbar>
 						<CriteriaSearch />
 						<div className={classes.rightAligned}>
-							<RecurserSearch />
+							<RecurserSearch
+								animationSpeed={animationSpeed}
+								selectedAlgo={selectedAlgo}
+							/>
 						</div>
-						<PathfindingSettings />
+						<PathfindingSettings
+							animationSpeed={animationSpeed}
+							setAnimationSpeed={setAnimationSpeed}
+							setSelectedAlgo={setSelectedAlgo}
+						/>
 					</Toolbar>
 				</AppBar>
 			</div>
