@@ -43,6 +43,11 @@ const App: React.FC = () => {
 					render={props => <Network {...props} profileId={3721} />}
 				/>
 				<Route
+					path="/discover"
+					exact
+					render={props => <Network {...props} profileId={3721} />}
+				/>
+				<Route
 					path="/notes"
 					exact
 					render={props => <Notes {...props} profileId={3721} />}

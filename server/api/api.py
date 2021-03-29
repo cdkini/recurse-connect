@@ -1,28 +1,39 @@
 from . import oauth, graph_utils, note_utils, app
-from flask import redirect, url_for, session, request
+from flask import Response, redirect, url_for, session, request, make_response, jsonify
+from flask_cors import cross_origin
 import requests
 import humps
 
 recurse = oauth.register(
     name="recurse",
-    client_id="79966bc856ad6026fda3d298d612afb217618f40546df6e54f5dce3e274d480f",
-    client_secret="56bf38a0c4fd2e267abc7ae143f9b40f8b06d4174830421328eef3cc47924b18",
+    client_id="8ee2901bc1c86bb6a860552cf70ba5ce3ac8c18835697e7e7b2484b430453926",
+    client_secret="2b45012b2b3c016f20e4e6b51f72c736704b89803ca4c5e566776a60a018503c",
     access_token_url="https://www.recurse.com/oauth/token",
     access_token_params=None,
     authorize_url="https://www.recurse.com/oauth/authorize",
-    authorize_params={"redirect_uri": "http://127.0.0.1:5000/api/v1/auth"},
+    authorize_params={"redirect_uri": "urn:ietf:wg:oauth:2.0:oob"},
     api_base_url="https://www.recurse.com/api/v1/",
     client_kwargs=None,
 )
 
+payload = {
+    "response_type": "code",
+    "client_id": "2f247ed93b7f9e9124fcbff7c15d3eb66cc660620ec74d9208731642816677a4",
+    "client_secret": "aeab298b746774c290733b2f6ad242bf4d6c2dbe71a36046af43d5dae6d1309f",
+    "redirect_uri":  "http://127.0.0.1:5000/api/v1/auth"
+}
+r = requests.get("https://www.recurse.com/oauth/authorize", params=payload)
 
+
+@cross_origin()
 @app.route("/api/v1/login")
 def login():
-    recurse = oauth.create_client("recurse")
-    redirect_url = url_for("auth")
-    a = str(recurse.authorize_redirect(redirect_url).__dict__["response"][0])
-    return {"a": a}
-    # return recurse.authorize_redirect(redirect_url)
+    response = make_response(response="hello")
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers["Content-Type"] = "application/json"
+    response.headers["Accept"] = "application/json"
+
+    return response
 
 
 @app.route("/api/v1/logout")
@@ -31,11 +42,11 @@ def logout():
     return redirect("/")
 
 
+@cross_origin()
 @app.route("/api/v1/auth")
 def auth():
-    recurse = oauth.create_client("recurse")
     token = recurse.authorize_access_token()
-    # print(token)
+    print(token)
     access_token = token["access_token"]
     r = requests.get(
         f"https://www.recurse.com/api/v1/profiles/me/?access_token={access_token}"

@@ -1,5 +1,4 @@
 import * as React from 'react';
-// import { RecurserNote } from '../../types/RecurserNote';
 import {
 	makeStyles,
 	createStyles,
@@ -11,11 +10,9 @@ import {
 	Divider,
 	Typography,
 	TextField,
+	Button,
 } from '@material-ui/core';
 import List from '@material-ui/core/List';
-// import AddIcon from '@material-ui/icons/Add';
-// import { NotesContext } from '../../contexts/NotesContext/NotesContext';
-// import { RecurserId } from '../../types/RecurserGraph';
 import { RecurserNote } from '../../types/RecurserNote';
 import { RecurserNode } from '../../types/RecurserGraph';
 
@@ -43,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			height: '35px',
 			borderBottom: '1px solid black',
 			borderRadius: '0px',
-			backgroundColor: '#29487d',
+			backgroundColor: '#000000',
 			color: 'white',
 			'&:hover': {
 				backgroundColor: '#88a2ce',
@@ -112,6 +109,7 @@ export const NotesSidebar: React.FC<Props> = (props: Props) => {
 	return (
 		<div>
 			<List dense className={classes.root}>
+				<Button className={classes.newNoteBtn}>New Note</Button>
 				<TextField
 					className={classes.newNoteInput}
 					label="Find notes by tag"

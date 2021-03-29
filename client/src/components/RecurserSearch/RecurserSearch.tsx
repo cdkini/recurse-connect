@@ -5,7 +5,6 @@ import { RecurserNode } from '../../types/RecurserGraph';
 import { TextField, FormHelperText, FormControl } from '@material-ui/core';
 import { FuzzySearchContext } from '../../contexts/FuzzySearchContext/FuzzySearchContext';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-// import { AlgoArgs } from '../../utils/graphUtils';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -22,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface Props {
-	animationSpeed: number | Array<number>;
+	animationDelay: number | Array<number>;
 	selectedAlgo: string;
 }
 
@@ -44,7 +43,7 @@ export const RecurserSearch: React.FC<Props> = (props: Props) => {
 			pathfinder.runSelectedAlgo(props.selectedAlgo, {
 				sourceId: userNode.id,
 				targetId: recurserSearchValue.id,
-				animationDelay: props.animationSpeed,
+				animationDelay: props.animationDelay,
 			});
 		}
 	};

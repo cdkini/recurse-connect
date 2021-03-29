@@ -100,12 +100,10 @@ export const NotesEditor: React.FC<Props> = (props: Props) => {
 	const [participants, setParticipants] = React.useState<Array<RecurserNode>>(
 		[],
 	);
-
-	const [title, setTitle] = React.useState<string>(props.focusedNote.title);
+	const [title, setTitle] = React.useState<string>('temp');
 	const [selectedDate, setSelectedDate] = React.useState<Date | null>(
 		props.focusedNote.date,
 	);
-
 	const [tags, setTags] = React.useState<string | null>(props.focusedNote.tags);
 	const [content, setContent] = React.useState<Node[]>(initialContent);
 
@@ -120,6 +118,13 @@ export const NotesEditor: React.FC<Props> = (props: Props) => {
 	const handleTagsChange = (event: React.ChangeEvent<{ value: string }>) => {
 		setTags(event.target.value);
 	};
+
+	React.useEffect(() => {
+		setTitle(props.focusedNote.title);
+		setSelectedDate(props.focusedNote.date);
+		setTags(props.focusedNote.tags);
+		setContent(props.focusedNote.content);
+	}, [props.focusedNote]);
 
 	const handleSaveClick = () => {
 		let body = {
@@ -165,7 +170,7 @@ export const NotesEditor: React.FC<Props> = (props: Props) => {
 							type="heading"
 							label="Title"
 							margin="dense"
-							defaultValue="My new note!"
+							value={title}
 							onChange={handleTitleChange}
 						/>
 					</Grid>

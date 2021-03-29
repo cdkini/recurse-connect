@@ -41,6 +41,9 @@ const useStyles = makeStyles((theme: Theme) =>
 		rightAligned: {
 			marginLeft: 'auto',
 		},
+		alert: {
+			marginBottom: 'auto',
+		},
 	}),
 );
 
@@ -69,7 +72,7 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 	const [alertSeverity, setAlertSeverity] = React.useState<
 		'error' | 'warning' | 'info' | 'success' | undefined
 	>(undefined);
-	const [animationSpeed, setAnimationSpeed] = React.useState<number | number[]>(
+	const [animationDelay, setAnimationSpeed] = React.useState<number | number[]>(
 		100,
 	);
 	const [selectedAlgo, setSelectedAlgo] = React.useState<string>('dfs');
@@ -100,30 +103,31 @@ export const FuzzySearchBar: React.FC<Props> = () => {
 				setOpenAlert,
 			}}
 		>
-			{openAlert && (
-				<Alert
-					onClose={() => {
-						setOpenAlert(false);
-					}}
-					variant="filled"
-					severity={alertSeverity}
-				>
-					{alertMessage}
-				</Alert>
-			)}
 			<div className={classes.root}>
+				{openAlert && (
+					<Alert
+						className={classes.alert}
+						onClose={() => {
+							setOpenAlert(false);
+						}}
+						variant="filled"
+						severity={alertSeverity}
+					>
+						{alertMessage}
+					</Alert>
+				)}
 				<FuzzySearchResults />
 				<AppBar className={classes.appBar} position="static">
 					<Toolbar>
 						<CriteriaSearch />
 						<div className={classes.rightAligned}>
 							<RecurserSearch
-								animationSpeed={animationSpeed}
+								animationDelay={animationDelay}
 								selectedAlgo={selectedAlgo}
 							/>
 						</div>
 						<PathfindingSettings
-							animationSpeed={animationSpeed}
+							animationSpeed={animationDelay}
 							setAnimationSpeed={setAnimationSpeed}
 							setSelectedAlgo={setSelectedAlgo}
 						/>
