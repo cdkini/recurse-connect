@@ -42,7 +42,9 @@ const useStyles = makeStyles((theme: Theme) =>
 			marginLeft: 'auto',
 		},
 		alert: {
-			marginBottom: 'auto',
+			width: '100%',
+			position: 'relative',
+			top: -158, // TODO(cdkini): Yuck let's get this absolute positioning out of here.
 		},
 	}),
 );
