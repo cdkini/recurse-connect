@@ -1,7 +1,6 @@
 {
 	"compilerOptions": {
 		"target": "es6",
-		"module": "esnext",
 		"allowJs": true,
 		"jsx": "react",
 		"sourceMap": true,
@@ -24,7 +23,8 @@
 		"resolveJsonModule": true,
 		"noEmit": true,
 		"isolatedModules": true,
-		"typeRoots": ["./types", "./node_modules/@types"]
+		"typeRoots": ["./types", "./node_modules/@types"],
+		"module": "esnext"
 	},
 	"include": ["src", "src/*"],
 	"exclude": ["node_modules", "./node_modules", "./node_modules/*", "api"]

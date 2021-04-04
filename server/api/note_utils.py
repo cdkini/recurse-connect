@@ -67,7 +67,7 @@ def post_user_note(data):
         id=id,
         author=data.get("author"),
         title=data.get("title"),
-        date=datetime.strptime(data.get("date")[:10], "%Y-%m-%d"),
+        date=data.get("date"),
         content=data.get("content")
     )
     print(note_entry)

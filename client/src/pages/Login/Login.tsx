@@ -10,11 +10,16 @@ export const Login: React.FC<Props> = () => {
 		fetch('/api/v1/login', {
 			method: 'GET',
 			headers: {
-				// 'Access-Control-Allow-Origin': 'http://localhost:5000',
-				// 'Accept': 'application/json',
-				// 'Content-Type': 'application/json',
+				'Access-Control-Allow-Origin': '*',
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
 			},
-		}).then(response => console.log(response));
+			redirect: 'follow',
+		}).then(response => {
+			if (response.redirected) {
+				window.location.href = response.url;
+			}
+		});
 	}, []);
 
 	return (

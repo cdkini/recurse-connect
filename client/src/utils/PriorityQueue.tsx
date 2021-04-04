@@ -17,7 +17,7 @@ export interface QueueStrategy<T> {
 
 export default class PriorityQueue<T> {
 	private _length: number = 0;
-	public get length() {
+	public length() {
 		return this._length;
 	}
 

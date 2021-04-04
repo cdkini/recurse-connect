@@ -433,7 +433,7 @@ export class Pathfinder {
 		});
 		priorityQueue.queue([args.sourceId, 0]);
 
-		while (priorityQueue.length > 0) {
+		while (priorityQueue.length() > 0) {
 			let [id, currDistance] = priorityQueue.dequeue();
 
 			if (currDistance > distances.get(id)!) {
@@ -526,7 +526,7 @@ export class Pathfinder {
 		});
 		priorityQueue.queue([args.sourceId, 0, heuristics.get(args.sourceId)!]);
 
-		while (priorityQueue.length > 0) {
+		while (priorityQueue.length() > 0) {
 			let item = priorityQueue.dequeue();
 			let currNode = item[0];
 			let currDistance = item[1];

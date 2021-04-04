@@ -132,16 +132,18 @@ export const NotesEditor: React.FC<Props> = (props: Props) => {
 			title: title,
 			date: selectedDate,
 			participants: participants.map(r => r.id),
-			tags: tags ? tags.split(', ').map(t => t.trim()) : null,
+			tags:
+				typeof tags === 'string' ? tags.split(', ').map(t => t.trim()) : null,
 			content: content,
 		};
 		fetch('http://localhost:5000/api/v1/notes', {
 			method: 'POST', // or 'PUT'
 			headers: {
 				Accept: 'application/json',
+				'Access-Control-Allow-Origin': 'http://localhost:5000',
 				'Content-Type': 'application/json',
 			},
-			// mode: 'no-cors',
+			mode: 'cors',
 			body: JSON.stringify(body),
 		});
 	};

@@ -34,6 +34,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			width: '75%',
 			height: '75%',
 		},
+		header: {
+			fontSize: 75,
+		},
+		subheader: {},
 	}),
 );
 
@@ -58,8 +62,8 @@ export const WelcomeCarousel: React.FC<Props> = ({}) => {
 			<br></br>
 			<br></br>
 			<br></br>
-			<h1>Recurse Connect</h1>
-			<h3>Using BFS to find you a new BFF</h3>
+			<h1 className={classes.header}>Recurse Connect</h1>
+			<h3 className={classes.subheader}>Using BFS to find you a new BFF</h3>
 			<br></br>
 			<Button
 				className={classes.button}

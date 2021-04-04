@@ -77,7 +77,7 @@ class Note(db.Model, Serializer):
     id = db.Column(db.Integer, primary_key=True)
     author = db.Column(db.Integer, db.ForeignKey("profile.id"))
     title = db.Column(db.String(128))
-    date = db.Column(db.DateTime)
+    date = db.Column(db.String(128))
     content = db.Column(db.JSON)
 
     def __repr__(self):

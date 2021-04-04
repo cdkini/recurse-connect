@@ -101,9 +101,7 @@ export const NotesSidebar: React.FC<Props> = (props: Props) => {
 	}
 
 	const handleNoteClick = (note: RecurserNote) => {
-		console.log(note);
 		props.setFocusedNote(note);
-		console.log(props.focusedNote);
 	};
 
 	return (
