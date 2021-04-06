@@ -1,9 +1,6 @@
-.eslintcache
-__pycache__
-api/__pycache__
-api/venv
-build/
-node_modules/
-src/react-app-env.d.ts
-server/venv/
+.env
 /**/*.js
+client/.eslintcache
+client/build/
+client/node_modules/
+scripts/venv/
