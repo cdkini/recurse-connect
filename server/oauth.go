@@ -3,17 +3,13 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"github.com/joho/godotenv"
+	// "io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
-
-	"github.com/joho/godotenv"
 )
-
-var accessToken string
-var authCode string
 
 var err = godotenv.Load(".env")
 var (
@@ -40,7 +36,7 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln("Could not parse user authorization code from response: ", err)
 	}
-	authCode = r.Form.Get("code")
+	authCode := r.Form.Get("code")
 
 	// POST to obtain access token
 	formData := url.Values{
@@ -55,28 +51,28 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln("Error occured when sending POST to Recurse API for auth: ", err)
 	}
+	defer resp.Body.Close()
 
 	var result map[string]interface{}
 	json.NewDecoder(resp.Body).Decode(&result)
-	accessToken = result["access_token"].(string)
+	accessToken := result["access_token"]
 
-	whoami()
+	whoami(accessToken)
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }
 
-func whoami() {
+func whoami(accessToken interface{}) float64 {
 	url := fmt.Sprintf("%speople/me?access_token=%s", apiBaseURL, accessToken)
+
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatalln("Could not identify the user: ", err)
 	}
+	defer resp.Body.Close()
 
-	bytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln("Could not read HTTP response: ", err)
-	}
+	var result map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&result)
 
-	fmt.Println(string(bytes))
+	fmt.Println(result["id"].(float64))
+	return result["id"].(float64)
 }
-
-// curl https://www.hackerschool.com/api/v1/people/me?access_token=<access_token_from_step_4>
