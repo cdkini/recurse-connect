@@ -4,3 +4,4 @@ client/.eslintcache
 client/build/
 client/node_modules/
 scripts/venv/
+out
