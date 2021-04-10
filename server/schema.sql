@@ -1,20 +1,20 @@
-CREATE TABLE IF NOT EXISTS location (
+CREATE TABLE IF NOT EXISTS locations (
     id INT PRIMARY KEY,
     name VARCHAR(128) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS company (
+CREATE TABLE IF NOT EXISTS companies (
     id INT PRIMARY KEY,
     name VARCHAR(128) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS profile (
+CREATE TABLE IF NOT EXISTS profiles (
     id INT PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
     profile_path VARCHAR(256) NOT NULL,
     image_path VARCHAR(512) NOT NULL,
-    location_id INT REFERENCES location (id),
-    company_id INT REFERENCES company (id),
+    location_id INT REFERENCES locations (id),
+    company_id INT REFERENCES companies (id),
     bio VARCHAR(1024),
     interests VARCHAR(512),
     before_rc VARCHAR(512),
@@ -24,33 +24,33 @@ CREATE TABLE IF NOT EXISTS profile (
     twitter VARCHAR(128)
 );
 
-CREATE TABLE IF NOT EXISTS batch (
+CREATE TABLE IF NOT EXISTS batches (
     id INT PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
     short_name VARCHAR(128) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS stint (
+CREATE TABLE IF NOT EXISTS stints (
     id INT PRIMARY KEY,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    batch_id INT REFERENCES batch (id),
-    profile_id INT REFERENCES profile (id)
+    batch_id INT REFERENCES batches (id),
+    profile_id INT REFERENCES profiles (id)
 );
 
-CREATE TABLE IF NOT EXISTS note (
+CREATE TABLE IF NOT EXISTS notes (
     id SERIAL PRIMARY KEY,
-    author_id INT REFERENCES profile (id),
+    author_id INT REFERENCES profiles (id),
     title VARCHAR(128) NOT NULL,
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     content JSON NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS tag (
+CREATE TABLE IF NOT EXISTS tags (
     id SERIAL PRIMARY KEY,
-    author_id INT REFERENCES profile (id),
+    author INT REFERENCES profiles (id),
     name VARCHAR(128) NOT NULL,
-    profile_id INT REFERENCES profile (id),
-    note_id INT REFERENCES note (id)
+    profile_id INT REFERENCES profiles (id),
+    note_id INT REFERENCES notes (id)
 );
 

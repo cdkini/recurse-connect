@@ -29,7 +29,7 @@ func generateJWT() (string, error) {
 	return tokenString, nil
 }
 
-func isAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handler {
+func CheckAuth(endpoint func(http.ResponseWriter, *http.Request)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		if r.Header["Token"] != nil {

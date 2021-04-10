@@ -1,56 +1,49 @@
-package server
+package router
 
 import (
-	"database/sql"
-	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-	"time"
 
+	"github.com/cdkini/recurse-connect/server/config"
+	"github.com/cdkini/recurse-connect/server/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
-type App struct {
-	Router   *mux.Router
-	Database *sql.DB
+func Initialize(env *config.Env) *mux.Router {
+	r := mux.NewRouter()
+	InitializeRoutes(r, env)
+	spa := NewSPAHandler("client/build", "index.html")
+	r.PathPrefix("/").Handler(spa)
+	return r
 }
 
-func NewApp() *App {
-	return &App{&mux.Router{}, &sql.DB{}}
-}
+func InitializeRoutes(r *mux.Router, env *config.Env) {
+	// Just to test that the API is actually reachable
+	r.Handle("/api/v1/health", handlers.Health())
 
-func (a *App) Initialize(user string, password string, name string) {
-	connectionString := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", user, password, name)
+	// OAuth endpoints
+	r.Handle("/api/v1/login", handlers.Login(env))
+	r.Handle("/api/v1/auth", handlers.Auth(env))
 
-	var err error
-	a.Database, err = sql.Open("postgres", connectionString)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// Subrouter for all user prefixed endpoints
+	s := r.PathPrefix("/api/v1/users").Subrouter()
 
-	err = a.Database.Ping()
-	if err != nil {
-		log.Panic(err)
-	}
+	// Recurser endpoints
+	s.Handle("/", handlers.GetMultipleProfiles(env)).Methods("GET")
+	s.Handle("/{userId:[0-9]+}", handlers.GetProfile(env)).Methods("GET")
 
-	a.Router = mux.NewRouter()
-}
+	// Note endpoints
+	s.Handle("/{userId:[0-9]+}/notes", handlers.GetNotes(env)).Methods("GET")
+	s.Handle("/{userId:[0-9]+}/notes", handlers.PostNote(env)).Methods("POST")
+	s.Handle("/{userId:[0-9]+}/notes/{noteId:[0-9]+}", handlers.PutNote(env)).Methods("GET")
+	s.Handle("/{userId:[0-9]+}/notes/{noteId:[0-9]+}", handlers.DeleteNote(env)).Methods("DELETE")
 
-func (a *App) Run(port string) {
-
-	srv := &http.Server{
-		Handler: a.Router,
-		Addr:    fmt.Sprintf("127.0.0.1%s", port),
-		// Good practice: enforce timeouts for servers you create!
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
-
-	fmt.Printf("Running server on %s\n", port)
-	log.Fatal(srv.ListenAndServe())
+	// Tag endpoints
+	s.Handle("/{userId:[0-9]+}/tags", handlers.GetTags(env)).Methods("GET")
+	s.Handle("/{userId:[0-9]+}/tags", handlers.PostTag(env)).Methods("POST")
+	s.Handle("/{userId:[0-9]+}/tags/{tagId:[0-9]+}", handlers.DeleteTag(env)).Methods("DELETE")
 }
 
 // SPAHandler implements the http.Handler interface, so we can use it
