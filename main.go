@@ -37,7 +37,7 @@ func main() {
 		log.Fatalf("Could not obtain connection to database: %v", err)
 	}
 
-	// Initialize environment, router, and server
+	// Initialize logger, environment, router, and server
 	env := config.NewEnv(db)
 	r := router.Initialize(env)
 	port := ":5000"

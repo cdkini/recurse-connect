@@ -3,31 +3,15 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"github.com/cdkini/recurse-connect/server/config"
 	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/cdkini/recurse-connect/server/config"
+	"github.com/cdkini/recurse-connect/server/types"
+
 	"github.com/gorilla/mux"
 )
-
-type Profile struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	ProfilePath string `json:"profilePath"`
-	ImagePath   string `json:"imagePath"`
-	Location    string `json:"location"`
-	Company     string `json:"company"`
-	Bio         string `json:"bio"`
-	Interests   string `json:"interests"`
-	BeforeRc    string `json:"beforeRc"`
-	DuringRc    string `json:"duringRc"`
-	Email       string `json:"email"`
-	GitHub      string `json:"github"`
-	Twitter     string `json:"twitter"`
-}
-
-type Profiles []*Profile
 
 // Endpoint: /api/v1/users/:userId
 func GetProfile(env *config.Env) http.Handler {
@@ -46,14 +30,14 @@ func GetProfile(env *config.Env) http.Handler {
 		// FIXME: Implement!
 		// If overlapping, get only overlapping to user else get ALL
 		query := `
-    SELECT profiles.id, profiles.name, profiles.profile_path, profiles.image_path, locations.name, companies.name, 
-    profiles.bio, profiles.interests, profiles.before_rc, profiles.during_rc, profiles.email, profiles.github, profiles.twitter
-    FROM profiles 
-    LEFT OUTER JOIN locations
-    `
+		SELECT profiles.id, profiles.name, profiles.profile_path, profiles.image_path, locations.name, companies.name,
+		profiles.bio, profiles.interests, profiles.before_rc, profiles.during_rc, profiles.email, profiles.github, profiles.twitter
+		FROM profiles
+		LEFT OUTER JOIN locations
+		`
 		row := env.DB.QueryRow(query, userId)
 
-		var profile Profile
+		var profile types.Profile
 		err = row.Scan(
 			&profile.Id, &profile.Name, &profile.ProfilePath, &profile.ImagePath, &profile.Location,
 			&profile.Company, &profile.Bio, &profile.Interests, &profile.BeforeRc, &profile.DuringRc,
@@ -86,10 +70,10 @@ func GetMultipleProfiles(env *config.Env) http.Handler {
 
 		defer rows.Close()
 
-		var profiles Profiles
+		var profiles types.Profiles
 
 		for rows.Next() {
-			var profile *Profile
+			var profile *types.Profile
 
 			err := rows.Scan(
 				&profile.Id, &profile.Name, &profile.ProfilePath, &profile.ImagePath, &profile.Location,

@@ -7,6 +7,7 @@ import (
 
 	"github.com/cdkini/recurse-connect/server/config"
 	"github.com/cdkini/recurse-connect/server/handlers"
+	"github.com/cdkini/recurse-connect/server/middleware"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
@@ -20,30 +21,35 @@ func Initialize(env *config.Env) *mux.Router {
 }
 
 func InitializeRoutes(r *mux.Router, env *config.Env) {
+	// Apply universal middleware
+	r.Use(middleware.LogRequest(r))
+
 	// Just to test that the API is actually reachable
-	r.Handle("/api/v1/health", handlers.Health())
+	r.Handle("/api/v1/health", handlers.Health(env))
 
 	// OAuth endpoints
 	r.Handle("/api/v1/login", handlers.Login(env))
 	r.Handle("/api/v1/auth", handlers.Auth(env))
+	r.Handle("/api/v1/whoami", handlers.Whoami(env))
 
-	// Subrouter for all user prefixed endpoints
+	// Apply middleware for protected endpoints through subrouter
 	s := r.PathPrefix("/api/v1/users").Subrouter()
+	s.Use(middleware.AuthCheck(r, env))
 
 	// Recurser endpoints
-	s.Handle("/", handlers.GetMultipleProfiles(env)).Methods("GET")
-	s.Handle("/{userId:[0-9]+}", handlers.GetProfile(env)).Methods("GET")
+	s.Handle("/", handlers.GetMultipleProfiles(env)).Methods(http.MethodGet)
+	s.Handle("/{userId:[0-9]+}", handlers.GetProfile(env)).Methods(http.MethodGet)
 
 	// Note endpoints
-	s.Handle("/{userId:[0-9]+}/notes", handlers.GetNotes(env)).Methods("GET")
-	s.Handle("/{userId:[0-9]+}/notes", handlers.PostNote(env)).Methods("POST")
-	s.Handle("/{userId:[0-9]+}/notes/{noteId:[0-9]+}", handlers.PutNote(env)).Methods("GET")
-	s.Handle("/{userId:[0-9]+}/notes/{noteId:[0-9]+}", handlers.DeleteNote(env)).Methods("DELETE")
+	s.Handle("/{userId:[0-9]+}/notes", handlers.GetNotes(env)).Methods(http.MethodGet)
+	s.Handle("/{userId:[0-9]+}/notes", handlers.PostNote(env)).Methods(http.MethodPost)
+	s.Handle("/{userId:[0-9]+}/notes/{noteId:[0-9]+}", handlers.PutNote(env)).Methods(http.MethodGet)
+	s.Handle("/{userId:[0-9]+}/notes/{noteId:[0-9]+}", handlers.DeleteNote(env)).Methods(http.MethodDelete)
 
 	// Tag endpoints
-	s.Handle("/{userId:[0-9]+}/tags", handlers.GetTags(env)).Methods("GET")
-	s.Handle("/{userId:[0-9]+}/tags", handlers.PostTag(env)).Methods("POST")
-	s.Handle("/{userId:[0-9]+}/tags/{tagId:[0-9]+}", handlers.DeleteTag(env)).Methods("DELETE")
+	s.Handle("/{userId:[0-9]+}/tags", handlers.GetTags(env)).Methods(http.MethodGet)
+	s.Handle("/{userId:[0-9]+}/tags", handlers.PostTag(env)).Methods(http.MethodPost)
+	s.Handle("/{userId:[0-9]+}/tags/{tagId:[0-9]+}", handlers.DeleteTag(env)).Methods(http.MethodDelete)
 }
 
 // SPAHandler implements the http.Handler interface, so we can use it

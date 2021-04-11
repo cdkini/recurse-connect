@@ -3,22 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cdkini/recurse-connect/server/config"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/cdkini/recurse-connect/server/config"
+	"github.com/cdkini/recurse-connect/server/types"
+	"github.com/gorilla/mux"
 )
-
-type Note struct {
-	Id      int    `json:"id"`
-	Author  string `json:"author"`
-	Title   string `json:"title"`
-	Date    string `json:"date"`
-	Content string `json:"content"`
-}
-
-type Notes []*Note
 
 // Endpoint: /api/v1/users/:userId/notes
 func GetNotes(env *config.Env) http.Handler {
@@ -31,6 +23,7 @@ func GetNotes(env *config.Env) http.Handler {
 		params := mux.Vars(r)
 		userId, err := strconv.Atoi(params["userId"])
 		if err != nil {
+			env.Logger.Printf("The userId arg '%v' is invalid: %v", userId, err)
 			http.Error(w, "Improper id passed to endpoint", http.StatusBadRequest)
 			return
 		}
@@ -38,25 +31,33 @@ func GetNotes(env *config.Env) http.Handler {
 		query := `SELECT * FROM notes WHERE author=$1`
 		rows, err := env.DB.Query(query, userId)
 		if err != nil {
-			log.Fatalf("Unable to execute the query: %v", err)
+			env.Logger.Printf("Unable to execute the query: %v", err)
+			http.Error(w, "Could not execute DB query", http.StatusNoContent)
+			return
 		}
 		defer rows.Close()
 
-		var notes Notes
+		var notes types.Notes
 
 		for rows.Next() {
-			var note *Note
+			var note *types.Note
 
-			err = rows.Scan(&note.Id, &note.Author, &note.Title, &note.Date, &note.Content)
-			if err != nil {
-				log.Fatalf("Unable to scan the row. %v", err)
+			if err = rows.Scan(&note.Id, &note.Author, &note.Title, &note.Date, &note.Content); err != nil {
+				env.Logger.Printf("Unable to scan query row: %v", err)
+				http.Error(w, "Could not scan row into struct", http.StatusInternalServerError)
+				return
+			}
+
+			if err = note.Validate(); err != nil {
+				env.Logger.Printf("Validation error; provided fields do not meet specification: %v", err)
+				http.Error(w, "Validation error due to improper field data", http.StatusBadRequest)
+				return
 			}
 
 			notes = append(notes, note)
 		}
 
-		json.NewEncoder(w).Encode(notes)
-
+		notes.ToJSON(w)
 	})
 }
 
@@ -76,10 +77,15 @@ func PostNote(env *config.Env) http.Handler {
 			return
 		}
 
-		var note Note
-		err = json.NewDecoder(r.Body).Decode(&note)
-		if err != nil {
+		var note types.Note
+		if err = note.FromJSON(r.Body); err != nil {
 			http.Error(w, "Unable to parse JSON", http.StatusBadRequest)
+			return
+		}
+
+		if err = note.Validate(); err != nil {
+			env.Logger.Printf("Validation error; provided fields do not meet specification: %v", err)
+			http.Error(w, "Validation error due to improper field data", http.StatusBadRequest)
 			return
 		}
 
@@ -122,9 +128,9 @@ func PutNote(env *config.Env) http.Handler {
 			return
 		}
 
-		var note Note
-		err = json.NewDecoder(r.Body).Decode(&note)
-		if err != nil {
+		var note types.Note
+		err = note.FromJSON(r.Body)
+		if err = note.FromJSON(r.Body); err != nil {
 			http.Error(w, "Unable to parse JSON", http.StatusBadRequest)
 			return
 		}

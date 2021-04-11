@@ -5,14 +5,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
+	"github.com/gorilla/sessions"
 )
 
-// A (simple) example of our application-wide configuration.
 type Env struct {
 	DB     *sql.DB
 	Logger *log.Logger
 	Vars   *EnvVars
+	Store  *sessions.CookieStore
 }
 
 type EnvVars struct {
@@ -25,12 +25,7 @@ type EnvVars struct {
 }
 
 func NewEnv(db *sql.DB) *Env {
-	// Load environment variables into environment
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Could not read environment variables from file: %s", err)
-	}
-
+	logger := &log.Logger{}
 	vars := &EnvVars{
 		AccessTokenURL: os.Getenv("ACCESS_TOKEN_URL"),
 		APIBaseURL:     os.Getenv("API_BASE_URL"),
@@ -39,7 +34,7 @@ func NewEnv(db *sql.DB) *Env {
 		ClientSecret:   os.Getenv("CLIENT_SECRET"),
 		RedirectURL:    os.Getenv("REDIRECT_URL"),
 	}
+	store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
-	return &Env{db, &log.Logger{}, vars}
-
+	return &Env{db, logger, vars, store}
 }

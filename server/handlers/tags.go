@@ -3,23 +3,15 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cdkini/recurse-connect/server/config"
 	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/cdkini/recurse-connect/server/config"
+	"github.com/cdkini/recurse-connect/server/types"
+
 	"github.com/gorilla/mux"
 )
-
-type Tag struct {
-	Id        int    `json:"id"`
-	Author    string `json:"author"`
-	Name      string `json:"name"`
-	ProfileId int    `json:"profileId"`
-	NoteId    int    `json:"noteId"`
-}
-
-type Tags []*Tag
 
 // Endpoint: /api/v1/users/:userId/tags
 func GetTags(env *config.Env) http.Handler {
@@ -42,14 +34,19 @@ func GetTags(env *config.Env) http.Handler {
 		}
 		defer rows.Close()
 
-		var tags Tags
+		var tags types.Tags
 
 		for rows.Next() {
-			var tag *Tag
+			var tag *types.Tag
 
-			err = rows.Scan(&tag.Id, &tag.Author, &tag.Name, &tag.ProfileId, &tag.NoteId)
-			if err != nil {
+			if err = rows.Scan(&tag.Id, &tag.Author, &tag.Name, &tag.ProfileId, &tag.NoteId); err != nil {
 				log.Fatalf("Unable to scan the row. %v", err)
+			}
+
+			if err = tag.Validate(); err != nil {
+				env.Logger.Printf("Validation error; provided fields do not meet specification: %v", err)
+				http.Error(w, "Validation error due to improper field data", http.StatusBadRequest)
+				return
 			}
 
 			tags = append(tags, tag)
@@ -75,18 +72,17 @@ func PostTag(env *config.Env) http.Handler {
 			return
 		}
 
-		var tag Tag
-		err = json.NewDecoder(r.Body).Decode(&tag)
-		if err != nil {
+		var tag types.Tag
+		if err = tag.FromJSON(r.Body); err != nil {
 			http.Error(w, "Unable to parse JSON", http.StatusBadRequest)
 			return
 		}
 
 		var tagId int
 		query := `INSERT INTO tags (author, name, profile_id, note_id) VALUES ($1, $2, $3, $4) RETURNING id`
-		err = env.DB.QueryRow(query, userId, tag.Name, tag.ProfileId, tag.NoteId).Scan(&tagId)
-		if err != nil {
+		if err = env.DB.QueryRow(query, userId, tag.Name, tag.ProfileId, tag.NoteId).Scan(&tagId); err != nil {
 			log.Fatalf("Unable to execute the query: %v", err)
+			return
 		}
 
 		fmt.Printf("Inserted a single record %v", tagId)

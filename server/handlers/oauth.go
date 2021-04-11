@@ -13,12 +13,16 @@ import (
 
 func Login(env *config.Env) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		url := fmt.Sprintf(
-			"%s?response_type=code&client_id=%s&client_secret=%s&redirect_uri=%s",
-			env.Vars.AuthorizeURL, env.Vars.ClientId, env.Vars.ClientSecret, env.Vars.RedirectURL)
+		session, _ := env.Store.Get(r, "session")
+		_, ok := session.Values["userId"]
+		if ok {
+			url := fmt.Sprintf(
+				"%s?response_type=code&client_id=%s&client_secret=%s&redirect_uri=%s",
+				env.Vars.AuthorizeURL, env.Vars.ClientId, env.Vars.ClientSecret, env.Vars.RedirectURL)
 
-		// Redirect to hit auth endpoint (api/v1/auth)
-		http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+			// Redirect to hit auth endpoint (api/v1/auth)
+			http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+		}
 	})
 }
 
@@ -50,12 +54,25 @@ func Auth(env *config.Env) http.Handler {
 		json.NewDecoder(resp.Body).Decode(&result)
 		accessToken := result["access_token"].(string)
 
-		whoami(env, accessToken)
+		addSession(w, r, env, accessToken)
+
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	})
 }
 
-func whoami(env *config.Env, accessToken string) float64 {
+func Whoami(env *config.Env) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, _ := env.Store.Get(r, "session")
+		userId, ok := session.Values["userId"]
+		if !ok {
+			http.Error(w, "Could not find user session", http.StatusNoContent)
+			return
+		}
+		json.NewEncoder(w).Encode(userId)
+	})
+}
+
+func addSession(w http.ResponseWriter, r *http.Request, env *config.Env, accessToken string) int {
 	url := fmt.Sprintf("%speople/me?access_token=%s", env.Vars.APIBaseURL, accessToken)
 
 	resp, err := http.Get(url)
@@ -67,7 +84,10 @@ func whoami(env *config.Env, accessToken string) float64 {
 	var result map[string]interface{}
 	json.NewDecoder(resp.Body).Decode(&result)
 
-	// FIXME: Convert to string
-	fmt.Println(result["id"].(float64))
-	return result["id"].(float64)
+	userId := int(result["id"].(float64))
+	session, _ := env.Store.Get(r, "session")
+	session.Values["userId"] = userId
+	session.Save(r, w)
+
+	return userId
 }
