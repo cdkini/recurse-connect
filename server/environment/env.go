@@ -1,4 +1,4 @@
-package config
+package environment
 
 import (
 	"database/sql"
@@ -8,14 +8,16 @@ import (
 	"github.com/gorilla/sessions"
 )
 
+// Env is a wrapper around a DB connection, loger, session store, and any env variables.
+// It is passed to HTTP handlers to facilitate dependency injection.
 type Env struct {
 	DB     *sql.DB
 	Logger *log.Logger
-	Vars   *EnvVars
 	Store  *sessions.CookieStore
+	Vars   *envVars
 }
 
-type EnvVars struct {
+type envVars struct {
 	AccessTokenURL string
 	APIBaseURL     string
 	AuthorizeURL   string
@@ -24,9 +26,8 @@ type EnvVars struct {
 	RedirectURL    string
 }
 
-func NewEnv(db *sql.DB) *Env {
-	logger := &log.Logger{}
-	vars := &EnvVars{
+func NewEnv(db *sql.DB, logger *log.Logger, store *sessions.CookieStore) *Env {
+	vars := &envVars{
 		AccessTokenURL: os.Getenv("ACCESS_TOKEN_URL"),
 		APIBaseURL:     os.Getenv("API_BASE_URL"),
 		AuthorizeURL:   os.Getenv("AUTHORIZE_URL"),
@@ -34,7 +35,6 @@ func NewEnv(db *sql.DB) *Env {
 		ClientSecret:   os.Getenv("CLIENT_SECRET"),
 		RedirectURL:    os.Getenv("REDIRECT_URL"),
 	}
-	store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
-	return &Env{db, logger, vars, store}
+	return &Env{db, logger, store, vars}
 }
