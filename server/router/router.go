@@ -5,24 +5,24 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cdkini/recurse-connect/server/config"
+	"github.com/cdkini/recurse-connect/server/environment"
 	"github.com/cdkini/recurse-connect/server/handlers"
 	"github.com/cdkini/recurse-connect/server/middleware"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
-func Initialize(env *config.Env) *mux.Router {
-	r := mux.NewRouter()
+func Initialize(env *environment.Env) *mux.Router {
+	r := mux.NewRouter().StrictSlash(true)
 	InitializeRoutes(r, env)
 	spa := NewSPAHandler("client/build", "index.html")
 	r.PathPrefix("/").Handler(spa)
 	return r
 }
 
-func InitializeRoutes(r *mux.Router, env *config.Env) {
+func InitializeRoutes(r *mux.Router, env *environment.Env) {
 	// Apply universal middleware
-	r.Use(middleware.LogRequest(r))
+	r.Use(middleware.LogRequest(r), middleware.SetDefaultHeaders(r, env))
 
 	// Just to test that the API is actually reachable
 	r.Handle("/api/v1/health", handlers.Health(env))
@@ -34,11 +34,10 @@ func InitializeRoutes(r *mux.Router, env *config.Env) {
 
 	// Apply middleware for protected endpoints through subrouter
 	s := r.PathPrefix("/api/v1/users").Subrouter()
-	s.Use(middleware.AuthCheck(r, env))
+	s.Use(middleware.AuthCheck(r, env), middleware.ConfigureCORS(r, env))
 
-	// Recurser endpoints
-	s.Handle("/", handlers.GetMultipleProfiles(env)).Methods(http.MethodGet)
-	s.Handle("/{userId:[0-9]+}", handlers.GetProfile(env)).Methods(http.MethodGet)
+	// Recurser graph endpoints
+	s.Handle("/graph", handlers.GetGraphData(env)).Methods(http.MethodGet)
 
 	// Note endpoints
 	s.Handle("/{userId:[0-9]+}/notes", handlers.GetNotes(env)).Methods(http.MethodGet)
