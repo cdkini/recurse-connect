@@ -3,16 +3,14 @@ package types
 import (
 	"encoding/json"
 	"io"
-
-	"github.com/go-playground/validator"
 )
 
 type Tag struct {
-	Id        int    `json:"id" validate:"numeric"`
-	Author    string `json:"author" validate:"required,alpha"`
-	Name      string `json:"name" validate:"required,alpha"`
-	ProfileId int    `json:"profileId" validate:"required,numeric"`
-	NoteId    int    `json:"noteId" validate:"required,numeric"`
+	Id        int    `json:"id"`
+	Author    string `json:"author"`
+	Name      string `json:"name"`
+	ProfileId int    `json:"profileId"`
+	NoteId    int    `json:"noteId"`
 }
 
 type Tags []*Tag
@@ -29,7 +27,8 @@ func (t *Tags) ToJSON(w io.Writer) error {
 	return json.NewEncoder(w).Encode(t)
 }
 
-func (t *Tag) Validate() error {
-	validate := validator.New()
-	return validate.Struct(t)
-}
+// FIXME: Could not get validators pkg working for datetime and json; open to come back with updates
+// func (t *Tag) Validate() error {
+// 	validate := validator.New()
+// 	return validate.Struct(t)
+// }

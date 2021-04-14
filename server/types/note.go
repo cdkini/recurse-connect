@@ -2,16 +2,15 @@ package types
 
 import (
 	"encoding/json"
-	"github.com/go-playground/validator"
 	"io"
 )
 
 type Note struct {
-	Id      int    `json:"id" validate:"numeric"`
-	Author  string `json:"author" validate:"required,alpha"`
-	Title   string `json:"title" validate:"required,alpha"`
-	Date    string `json:"date" validate:"required,datetime"`
-	Content string `json:"content" validate:"required,json"`
+	Id      int     `json:"id"`
+	Author  *string `json:"author"`
+	Title   *string `json:"title"`
+	Date    *string `json:"date"`
+	Content *string `json:"content"`
 }
 
 type Notes []*Note
@@ -28,7 +27,8 @@ func (n *Notes) ToJSON(w io.Writer) error {
 	return json.NewEncoder(w).Encode(n)
 }
 
-func (n *Note) Validate() error {
-	validate := validator.New()
-	return validate.Struct(n)
-}
+// FIXME: Could not get validators pkg working for datetime and json; open to come back with updates
+// func (n *Note) Validate() error {
+// 	validate := validator.New()
+// 	return validate.Struct(n)
+// }
