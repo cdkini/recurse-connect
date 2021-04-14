@@ -2,21 +2,18 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/cdkini/recurse-connect/server/config"
+	"github.com/cdkini/recurse-connect/server/environment"
 	"net/http"
 )
 
-// Endpoint: /api/v1/health
-func Health(env *config.Env) http.Handler {
+// GET /api/v1/health
+func Health(env *environment.Env) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
-		// TODO: Limit CORS access
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-
 		resp := map[string]interface{}{
 			"ok": true,
 		}
 
 		json.NewEncoder(w).Encode(resp)
+		env.Logger.Println("Successfully returned JSON response for /health endpoint")
 	})
 }
