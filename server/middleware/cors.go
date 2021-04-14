@@ -7,15 +7,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func AuthCheck(r *mux.Router, env *environment.Env) mux.MiddlewareFunc {
+func ConfigureCORS(r *mux.Router, env *environment.Env) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			session, _ := env.Store.Get(r, "session")
-			_, ok := session.Values["userId"]
-			if !ok {
-				http.Redirect(w, r, "//api/v1/login", http.StatusFound)
-				return
-			}
+			w.Header().Set("Access-Control-Allow-Origin", "127.0.0.1:3000")
 			next.ServeHTTP(w, r)
 		})
 	}
