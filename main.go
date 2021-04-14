@@ -4,14 +4,16 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
 
-	"github.com/cdkini/recurse-connect/server/config"
+	"github.com/cdkini/recurse-connect/server/environment"
 	"github.com/cdkini/recurse-connect/server/router"
+	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 )
 
@@ -37,10 +39,23 @@ func main() {
 		log.Fatalf("Could not obtain connection to database: %v", err)
 	}
 
-	// Initialize logger, environment, router, and server
-	env := config.NewEnv(db)
+	// Configure logger and have it both print to STDOUT and write to a log file
+	logger := &log.Logger{}
+
+	f, err := os.OpenFile("rc.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("Error opening file: %v", err)
+	}
+	defer f.Close()
+
+	mw := io.MultiWriter(os.Stdout, f)
+	logger.SetOutput(mw)
+
+	// Initialize environment, router, and server
+	store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+	env := environment.NewEnv(db, logger, store)
 	r := router.Initialize(env)
-	port := ":5000"
+	port := os.Getenv("APP_PORT")
 
 	srv := &http.Server{
 		Handler: r,
