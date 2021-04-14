@@ -5,3 +5,4 @@ client/build/
 client/node_modules/
 scripts/venv/
 out
+rc.log
