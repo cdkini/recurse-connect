@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS notes (
 
 CREATE TABLE IF NOT EXISTS tags (
     id SERIAL PRIMARY KEY,
-    author INT REFERENCES profiles (id),
+    author_id INT REFERENCES profiles (id),
     name VARCHAR(128) NOT NULL,
     profile_id INT REFERENCES profiles (id),
     note_id INT REFERENCES notes (id)

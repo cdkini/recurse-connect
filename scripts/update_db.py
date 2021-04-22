@@ -1,19 +1,18 @@
 #!/usr/bin/python
 
-import requests
 import os
 import time
-
 from datetime import datetime
 
-import dotenv 
+import dotenv
 import psycopg2
+import requests
 
 connections = 0
 
 
 def connect_to_db(db_name, user, host, password):
-    """Establishes a connection with the Postgres database. 
+    """Establishes a connection with the Postgres database.
     The resulting connection and cursor need to be manually closed after usage.
 
     Args:
@@ -35,6 +34,7 @@ def connect_to_db(db_name, user, host, password):
     psql_cursor = psql_connection.cursor()
 
     return psql_cursor, psql_connection
+
 
 def get_profiles(access_token):
     """Accesses the Recurse API to obtain and aggregate information about individual participants.
@@ -92,15 +92,15 @@ def update_db(profiles, psql_cursor, psq_connection):
         None
     """
     for profile in profiles:
-        _update_location_table(profile, psql_cursor, psql_connection)
-        _update_company_table(profile, psql_cursor, psql_connection)
-        _update_profile_table(profile, psql_cursor, psql_connection)
-        _update_batch_and_stint_tables(profile, psql_cursor, psql_connection)
+        _update_locations_table(profile, psql_cursor, psql_connection)
+        _update_companies_table(profile, psql_cursor, psql_connection)
+        _update_profiles_table(profile, psql_cursor, psql_connection)
+        _update_batches_and_stints_tables(profile, psql_cursor, psql_connection)
 
     print(f"Successfully updated database entries")
 
 
-def _update_profile_table(profile, psql_cursor, psql_connection):
+def _update_profiles_table(profile, psql_cursor, psql_connection):
     profile_id = profile.get("id")
     name = profile.get("name")
     profile_path = f"www.recurse.com/directory/{profile.get('slug')}"
@@ -126,24 +126,33 @@ def _update_profile_table(profile, psql_cursor, psql_connection):
     company_id = None if not company else company.get("id")
 
     query = """ 
-    INSERT INTO profile (id, name, profile_path, image_path, interests, location_id, company_id, before_rc, bio, during_rc, email, github, twitter) 
+    INSERT INTO profiles (id, name, profile_path, image_path, interests, location_id, company_id, before_rc, bio, during_rc, email, github, twitter) 
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     ON CONFLICT (id) DO UPDATE 
     SET (image_path, interests, location_id, company_id, before_rc, bio, during_rc, email, github, twitter) = 
     (EXCLUDED.image_path, EXCLUDED.interests, EXCLUDED.location_id, EXCLUDED.company_id, EXCLUDED.before_rc, EXCLUDED.bio, EXCLUDED.during_rc, EXCLUDED.email, EXCLUDED.github, EXCLUDED.twitter);
     """
     vals = (
-        profile_id, name, profile_path, 
-        image_path, interests, location_id, 
-        company_id, before_rc, bio, during_rc, 
-        email, github, twitter
+        profile_id,
+        name,
+        profile_path,
+        image_path,
+        interests,
+        location_id,
+        company_id,
+        before_rc,
+        bio,
+        during_rc,
+        email,
+        github,
+        twitter,
     )
 
     psql_cursor.execute(query, vals)
     psql_connection.commit()
 
 
-def _update_location_table(profile, psql_cursor, psql_connection):
+def _update_locations_table(profile, psql_cursor, psql_connection):
     location = profile.get("current_location")
     if not location:
         return
@@ -152,7 +161,7 @@ def _update_location_table(profile, psql_cursor, psql_connection):
     name = location.get("name")
 
     query = """ 
-    INSERT INTO location (id, name) 
+    INSERT INTO locations (id, name) 
     VALUES (%s, %s)
     ON CONFLICT (id) DO NOTHING;
     """
@@ -162,7 +171,7 @@ def _update_location_table(profile, psql_cursor, psql_connection):
     psql_connection.commit()
 
 
-def _update_batch_and_stint_tables(profile, psql_cursor, psql_connection):
+def _update_batches_and_stints_tables(profile, psql_cursor, psql_connection):
     profile_id = profile.get("id")
 
     stints = profile.get("stints")
@@ -171,13 +180,13 @@ def _update_batch_and_stint_tables(profile, psql_cursor, psql_connection):
         if not batch:
             continue  # Excludes facilitators and test users
 
-        # Update 'Batch' db table
+        # Update 'batches' db table
         batch_id = batch.get("id")
         name = batch.get("name")
         short_name = batch.get("short_name")
 
         query = """ 
-        INSERT INTO batch (id, name, short_name) 
+        INSERT INTO batches (id, name, short_name) 
         VALUES (%s, %s, %s)
         ON CONFLICT (id) DO NOTHING;
         """
@@ -186,13 +195,13 @@ def _update_batch_and_stint_tables(profile, psql_cursor, psql_connection):
         psql_cursor.execute(query, vals)
         psql_connection.commit()
 
-        # Update 'Stint' db table
+        # Update 'stints' db table
         stint_id = stint.get("id")
         start_date = datetime.strptime(stint.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(stint.get("end_date"), "%Y-%m-%d")
 
         query = """ 
-        INSERT INTO stint (id, start_date, end_date, batch_id, profile_id) 
+        INSERT INTO stints (id, start_date, end_date, batch_id, profile_id) 
         VALUES (%s, %s, %s, %s, %s)
         ON CONFLICT (id) DO NOTHING;
         """
@@ -202,7 +211,7 @@ def _update_batch_and_stint_tables(profile, psql_cursor, psql_connection):
         psql_connection.commit()
 
 
-def _update_company_table(profile, psql_cursor, psql_connection):
+def _update_companies_table(profile, psql_cursor, psql_connection):
     company = profile.get("company")
     if not company:
         return
@@ -211,7 +220,7 @@ def _update_company_table(profile, psql_cursor, psql_connection):
     name = company.get("name")
 
     query = """ 
-    INSERT INTO company (id, name) 
+    INSERT INTO companies (id, name) 
     VALUES (%s, %s)
     ON CONFLICT (id) DO NOTHING;
     """
@@ -226,10 +235,10 @@ if __name__ == "__main__":
         start = time.time()
 
         dotenv.load_dotenv()
-        DB_NAME = os.getenv('APP_DB_NAME')
-        USER = os.getenv('APP_DB_USERNAME')
-        HOST = os.getenv('APP_DB_HOST')
-        PASSWORD = os.getenv('APP_DB_PASSWORD')
+        DB_NAME = os.getenv("APP_DB_NAME")
+        USER = os.getenv("APP_DB_USERNAME")
+        HOST = os.getenv("APP_DB_HOST")
+        PASSWORD = os.getenv("APP_DB_PASSWORD")
         API_TOKEN = os.getenv("API_TOKEN")
 
         psql_cursor, psql_connection = connect_to_db(DB_NAME, USER, HOST, PASSWORD)
@@ -248,4 +257,3 @@ if __name__ == "__main__":
             psql_cursor.close()
             psql_connection.close()
             print("Postgres connection is now closed")
-
