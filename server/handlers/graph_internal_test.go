@@ -22,7 +22,7 @@ func TestGetDateRange(t *testing.T) {
 	}{
 		{
 			name:   "Valid dates",
-			args:   map[string][]string{"startDate": {"01-01-2020"}, "endDate": {"12-31-2020"}},
+			args:   map[string][]string{"startDate": {"2020-01-01"}, "endDate": {"2020-12-31"}},
 			getAll: false,
 			start:  time.Date(2020, 1, 1, 0, 0, 0, 0, loc),
 			end:    time.Date(2020, 12, 31, 0, 0, 0, 0, loc),
@@ -38,7 +38,7 @@ func TestGetDateRange(t *testing.T) {
 		},
 		{
 			name:   "Invalid date format",
-			args:   map[string][]string{"startDate": {"2020-01-01"}, "endDate": {"2020-12-31"}},
+			args:   map[string][]string{"startDate": {"01-01-2020"}, "endDate": {"12-31-2020"}},
 			getAll: false,
 			start:  time.Date(2020, 1, 0, 0, 0, 0, 0, loc),
 			end:    time.Date(2020, 12, 31, 0, 0, 0, 0, loc),
@@ -75,66 +75,6 @@ func TestGetDateRange(t *testing.T) {
 		})
 	}
 }
-
-// func TestDetermineOverlap(t *testing.T) {
-// 	loc, err := time.LoadLocation("EST")
-// 	if err != nil {
-// 		t.Fatalf("Could not establish EST timezone: %v", err)
-// 	}
-
-// 	tt := []struct {
-// 		name   string
-// 		startA time.Time
-// 		startB time.Time
-// 		endA   time.Time
-// 		endB   time.Time
-// 		want   int
-// 	}{
-// 		{
-// 			name:   "A and B do not overlap",
-// 			startA: time.Date(2020, 1, 1, 0, 0, 0, 0, loc),
-// 			endA:   time.Date(2020, 4, 15, 0, 0, 0, 0, loc),
-// 			startB: time.Date(2020, 5, 1, 0, 0, 0, 0, loc),
-// 			endB:   time.Date(2020, 7, 15, 0, 0, 0, 0, loc),
-// 			want:   -15,
-// 		},
-// 		{
-// 			name:   "A envelopes B",
-// 			startA: time.Date(2020, 1, 1, 0, 0, 0, 0, loc),
-// 			endA:   time.Date(2020, 9, 15, 0, 0, 0, 0, loc),
-// 			startB: time.Date(2020, 5, 1, 0, 0, 0, 0, loc),
-// 			endB:   time.Date(2020, 7, 15, 0, 0, 0, 0, loc),
-// 			want:   138,
-// 		},
-// 		{
-// 			name:   "A intersects with B",
-// 			startA: time.Date(2020, 1, 1, 0, 0, 0, 0, loc),
-// 			endA:   time.Date(2020, 4, 15, 0, 0, 0, 0, loc),
-// 			startB: time.Date(2020, 2, 1, 0, 0, 0, 0, loc),
-// 			endB:   time.Date(2020, 7, 15, 0, 0, 0, 0, loc),
-// 			want:   74,
-// 		},
-// 		{
-// 			name:   "A and B are the same ranges",
-// 			startA: time.Date(2020, 1, 1, 0, 0, 0, 0, loc),
-// 			endA:   time.Date(2020, 4, 15, 0, 0, 0, 0, loc),
-// 			startB: time.Date(2020, 1, 1, 0, 0, 0, 0, loc),
-// 			endB:   time.Date(2020, 4, 15, 0, 0, 0, 0, loc),
-// 			want:   105,
-// 		},
-// 	}
-
-// 	for _, tc := range tt {
-// 		t.Run(tc.name, func(t *testing.T) {
-
-// 			got := determineOverlap(&tc.startA, &tc.endA, &tc.startB, &tc.endB)
-
-// 			if got != tc.want {
-// 				t.Errorf("Wanted an overlap of %v, got %v", tc.want, got)
-// 			}
-// 		})
-// 	}
-// }
 
 func equal(t1 time.Time, t2 time.Time) bool {
 	if t1.Year() != t2.Year() {

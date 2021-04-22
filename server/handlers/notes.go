@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/cdkini/recurse-connect/server/database"
+	"github.com/cdkini/recurse-connect/server/models"
 	"github.com/gorilla/mux"
 )
 
@@ -21,10 +22,11 @@ func GetNotes(db database.DB, logger *log.Logger) http.HandlerFunc {
 			return
 		}
 
-		var notes []*database.Note
-		err = db.ReadNotes(userId, notes)
-		if err != nil {
-			// TODO: Add error messaging
+		var notes []*models.Note
+		if err = db.ReadNotes(userId, notes); err != nil {
+			logger.Printf("Ran into error while reading notes: %v\n", err)
+			http.Error(w, "Improper userId passed to endpoint", http.StatusBadRequest)
+			return
 		}
 
 		json.NewEncoder(w).Encode(notes)
@@ -46,7 +48,7 @@ func PostNote(db database.DB, logger *log.Logger) http.HandlerFunc {
 			return
 		}
 
-		var note *database.Note
+		var note *models.Note
 		if err = db.ParseNote(r.Body, note); err != nil {
 			logger.Printf("Could not scan row into struct: %v\n", err)
 			http.Error(w, "There was an issue deserializing your data", http.StatusUnprocessableEntity)
@@ -55,7 +57,9 @@ func PostNote(db database.DB, logger *log.Logger) http.HandlerFunc {
 
 		noteId, err := db.PostNote(userId, note)
 		if err != nil {
-			// TODO: Add error messaging
+			logger.Printf("Ran into error while posting note to database: %v\n", err)
+			http.Error(w, "There was an issue deserializing your data", http.StatusUnprocessableEntity)
+			return
 		}
 
 		resp := map[string]interface{}{
@@ -89,8 +93,8 @@ func PutNote(db database.DB, logger *log.Logger) http.HandlerFunc {
 			return
 		}
 
-		var note *database.Note
-        if err = db.ParseNote(r.Body, note); err != nil {
+		var note *models.Note
+		if err = db.ParseNote(r.Body, note); err != nil {
 			logger.Printf("Could not scan row into struct: %v\n", err)
 			http.Error(w, "There was an issue deserializing your data from JSON", http.StatusInternalServerError)
 			return
@@ -98,8 +102,7 @@ func PutNote(db database.DB, logger *log.Logger) http.HandlerFunc {
 
 		err = db.UpdateNote(userId, noteId, note)
 		if err != nil {
-			// TODO: Come back to this to update messages!
-			logger.Printf("Issue counting rows affected: %v\n", err)
+			logger.Printf("Ran into issue while updating note: %v\n", err)
 			http.Error(w, "There was an issue with the database query", http.StatusInternalServerError)
 			return
 		}
@@ -137,7 +140,9 @@ func DeleteNote(db database.DB, logger *log.Logger) http.HandlerFunc {
 
 		err = db.DeleteNote(userId, noteId)
 		if err != nil {
-			// TODO: Deal with error
+			logger.Printf("Ran into issue while deleting note: %v\n", err)
+			http.Error(w, "There was an issue with the database query", http.StatusInternalServerError)
+			return
 		}
 
 		resp := map[string]interface{}{

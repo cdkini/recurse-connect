@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cdkini/recurse-connect/server/database"
+	"github.com/cdkini/recurse-connect/server/models"
 	"github.com/cdkini/recurse-connect/server/handlers"
 )
 
-func (m *mockDB) ReadGraph(start time.Time, end time.Time, graph *database.Graph) error {
+func (m *mockDB) ReadGraph(start time.Time, end time.Time, graph *models.Graph) error {
 	return nil
 }
 
@@ -25,7 +25,7 @@ func TestGetGraph(t *testing.T) {
 		{
 			name: "Valid request with dates",
 			url:  "localhost:5000/api/v1/users?startDate=03-01-2020&endDate=04-01-2020",
-			args: map[string]string{"startDate": "03-01-2020", "endDate": "04-01-2020"},
+			args: map[string]string{"startDate": "2020-03-01", "endDate": "2020-04-01"},
 			code: 200,
 		},
 		{
@@ -37,7 +37,7 @@ func TestGetGraph(t *testing.T) {
 		{
 			name: "Wrong date format",
 			url:  "localhost:5000/api/v1/users?startDate=2020-03-01&endDate=2020-04-01",
-			args: map[string]string{"startDate": "2020-03-01", "endDate": "2020-04-01"},
+			args: map[string]string{"startDate": "03-01-2020", "endDate": "04-01-2020"},
 			code: 400,
 		},
 	}
@@ -75,3 +75,4 @@ func TestGetGraph(t *testing.T) {
 		})
 	}
 }
+

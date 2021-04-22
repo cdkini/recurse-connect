@@ -8,16 +8,16 @@ import (
 
 	"testing"
 
-	"github.com/cdkini/recurse-connect/server/database"
 	"github.com/cdkini/recurse-connect/server/handlers"
+	"github.com/cdkini/recurse-connect/server/models"
 	"github.com/gorilla/mux"
 )
 
-func (m *mockDB) ParseNote(body io.ReadCloser, note *database.Note) error      { return nil }
-func (m *mockDB) ReadNotes(userId int, notes []*database.Note) error           { return nil }
-func (m *mockDB) PostNote(userId int, note *database.Note) (int, error)        { return -1, nil }
-func (m *mockDB) UpdateNote(userId int, noteId int, note *database.Note) error { return nil }
-func (m *mockDB) DeleteNote(userId int, noteId int) error                      { return nil }
+func (m *mockDB) ParseNote(body io.Reader, note *models.Note) error          { return nil }
+func (m *mockDB) ReadNotes(userId int, notes []*models.Note) error           { return nil }
+func (m *mockDB) PostNote(userId int, note *models.Note) (int, error)        { return -1, nil }
+func (m *mockDB) UpdateNote(userId int, noteId int, note *models.Note) error { return nil }
+func (m *mockDB) DeleteNote(userId int, noteId int) error                    { return nil }
 
 func TestGetNotes(t *testing.T) {
 	tt := []struct {

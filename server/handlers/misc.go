@@ -12,6 +12,7 @@ import (
 func Health(logger *log.Logger) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
+        // Used as a simple sanity check of the API's functionality
 		resp := map[string]interface{}{
 			"ok": true,
 		}
@@ -21,7 +22,7 @@ func Health(logger *log.Logger) http.HandlerFunc {
 	})
 }
 
-// // GET api/v1/whoami
+// GET api/v1/whoami
 func Whoami(logger *log.Logger, store *sessions.CookieStore) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, _ := store.Get(r, "session")

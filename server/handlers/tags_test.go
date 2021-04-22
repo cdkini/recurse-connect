@@ -7,15 +7,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/cdkini/recurse-connect/server/database"
 	"github.com/cdkini/recurse-connect/server/handlers"
+	"github.com/cdkini/recurse-connect/server/models"
 	"github.com/gorilla/mux"
 )
 
-func (m *mockDB) ParseTag(body io.ReadCloser, tag *database.Tag) error         { return nil }
-func (m *mockDB) ReadTags(userId int, tags []*database.Tag) error              { return nil }
-func (m *mockDB) PostTag(userId int, tag *database.Tag) (int, error)           { return -1, nil }
-func (m *mockDB) DeleteTag(userId int, tagId int) error                        { return nil }
+func (m *mockDB) ParseTag(body io.Reader, tag *models.Tag) error   { return nil }
+func (m *mockDB) ReadTags(userId int, tags []*models.Tag) error    { return nil }
+func (m *mockDB) PostTag(userId int, tag *models.Tag) (int, error) { return -1, nil }
+func (m *mockDB) DeleteTag(userId int, tagId int) error            { return nil }
 
 func TestGetTags(t *testing.T) {
 	tt := []struct {
