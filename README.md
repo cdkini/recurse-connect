@@ -16,6 +16,10 @@
     
 Recurse Connect is a social networking platform designed for and by the [Recurse Center](https://recurse.com) community. Using the Recurse API, Recurse Connect creates weighted network graphs connecting participants based on time spent at RC. Users can query for likeminded participants using a variety of factors and visualize various pathfinding algorithms, including DFS, BFS, Dijsktra's, and A*, to determine the necessary people to talk to in order to make a new connection!
 
+Here's a video of an earlier prototype: [Pathfinding Demo](https://www.youtube.com/watch?v=Kq08tgYypIE). 
+
+Please note that the full fledged application is restricted to the Recurse Center community due to the reliance on the RC API.
+
 Recurse Connect is primarily written in Go on the backend with React and TypeScript making up the frontend. The application is hosted on Google Cloud App Engine.
 
 ## Table of Contents
