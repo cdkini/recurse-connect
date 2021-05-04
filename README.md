@@ -26,7 +26,7 @@ Recurse Connect is primarily written in Go on the backend with React and TypeScr
 
 ## Contributing
 
-Although clocviz was designed as an educational project, any contributions or suggestions are greatly appreciated! If you would like to contribute to the codebase, please follow these steps:
+Although Recurse Connect was designed as an educational project, any contributions or suggestions are greatly appreciated! If you would like to contribute to the codebase, please follow these steps:
 
 ```
 1. Create an issue
